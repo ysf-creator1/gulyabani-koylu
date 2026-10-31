@@ -1,0 +1,23 @@
+## Review
+
+**Verdict:** READY
+**Reviewer:** aidlc-product-lead-agent
+**Date:** 2026-10-31T10:47:21Z
+**Iteration:** 1
+**Verdict Dictated:** no
+
+### Findings
+
+| ID | Severity | Location | Finding | Required action | Status |
+|---|---|---|---|---|---|
+| R-01 | Major | aidlc/spaces/default/intents/261030-gulyabani-v1/inception/requirements-analysis/requirements.md > FR11.1 (Kazanma kontrolü) | Zincir sonunda hem son gulyabani hem de son köylü aynı anda ölürse (ör. karışık sevdalı çiftin biri gulyabani, diğeri köylü ve ikisi de son kalanlarsa; ya da Celalli Damat son köylüyü götürürse) sonuç belirsizdir. Sıra (3) "tüm gulyabaniler öldü, Köylüler kazanır" ile (4) "Gulyabaniler tarafı dışındaki herkes öldü, Gulyabaniler kazanır" aynı anda doğru olabilir. Hayatta kimse kalmadığında ne gösterileceği yazılmamış. Kabul ölçütü yok. | FR11.1'e "hayatta kimse kalmadı" durumu için tek bir sonuç yaz (ör. berabere ekranı ya da hangi tarafın kazandığı). Bu durum için bir Diyelim ki/Eğer ki/O zaman ölçütü ekle. | New |
+| R-02 | Major | aidlc/spaces/default/intents/261030-gulyabani-v1/inception/requirements-analysis/requirements.md > FR14.1, FR1.3, FR1.6 | Oturum belirteci tarayıcıda saklanıyor. Oyuncu linki WhatsApp'ın uygulama içi tarayıcısında açıp sonra Safari/Chrome'a geçerse, çerezleri/site verisini silerse ya da gizli sekme kullanırsa belirteç yoktur. Bu oyuncu için ne olacağı yazılmamış: nick "kullanımda" diye engellenir (FR1.4), oyun sürüyorsa bekleme ekranına düşer (FR1.6). Telefon ağırlıklı bu oyunda bu yaygın bir durum ve NFR4 ile asıl değer olan "kaldığı yerden devam"ı doğrudan etkiler. | Belirteci kaybeden oyuncunun oyuna dönüşü için bir kural yaz. Örneğin moderatörün onayıyla aynı nick'e yeni cihazdan devralma, ya da bunun v1 dışı olduğunu ve moderatörün yalnızca çıkarıp oyuncuyu bekleme ekranına alabildiğini açıkça belirt. Bir kabul ölçütü ekle. | New |
+| R-03 | Minor | aidlc/spaces/default/intents/261030-gulyabani-v1/inception/requirements-analysis/requirements.md > FR8.2, FR9.3, FR16.1 ile FR13.3 / A13 | FR8.2 "gündüz sohbetine yalnızca yaşayan oyuncular yazar" ve FR9.3/FR16.1 "son sözde yalnızca sanık yazar" der; FR13.3 ve A13 ise moderatörün gündüz sohbetine yazabildiğini söyler. Moderatörün son söz sırasında yazıp yazamayacağı çelişkili. | FR8.2, FR9.3 ve FR16.1'e "moderatör hariç" ya da "moderatör de yazamaz" ifadesini açıkça ekle. | New |
+| R-04 | Minor | aidlc/spaces/default/intents/261030-gulyabani-v1/inception/requirements-analysis/requirements.md > FR9.2, FR9.4 | Eşitlikte "yeniden oylama" ile onay oylamasındaki "bir günde en fazla 2 yeniden oylama" sınırı arasındaki ilişki yazılmamış: eşitlik yeniden oylaması bu 2'lik sayıya dahil mi? | Sınırın iki tür yeniden oylamayı birlikte mi ayrı mı saydığını belirt ve bir ölçütle sına. | New |
+| R-05 | Minor | aidlc/spaces/default/intents/261030-gulyabani-v1/inception/requirements-analysis/requirements.md > FR4.2, FR5.1 | Oyuncu "Gördüm" demezse oyunun ilerleyip ilerlemediği yazılmamış. Moderatör kimin demediğini görüyor ama ilk geceye geçişin beklemeye bağlı olup olmadığı belirsiz. | İlk geceye geçişin moderatörün tek başına kararı olduğunu ya da bir bekleme süresi bulunduğunu yaz. | New |
+| R-06 | Minor | aidlc/spaces/default/intents/261030-gulyabani-v1/inception/requirements-analysis/requirements.md > FR3.3 | Gulyabani adet seçicisinin alt sınırı yazılmamış (0 gulyabaniyle başlatma engelleniyor mu?). Gulyabani sayısı oyuncu sayısından küçük ama köylü kalmayacak sayıda olursa ne olacağı da belirsiz. | Adet seçicinin en az 1 olduğunu ve başlatma doğrulamasına bu kuralı ekle. | New |
+| R-07 | Minor | aidlc/spaces/default/intents/261030-gulyabani-v1/inception/requirements-analysis/requirements.md > FR16.5, FR1.1 (KVKK bilgilendirmesi) | Şikayet edilen mesajın metni (kişisel veri olabilir) 1 ay saklanıyor, ama KVKK bilgilendirmesinin bunu söylemesi gerektiği yazılmamış. Sahip istisnayı onayladı; bildirim yükümlülüğü ise açıkta. | KVKK bilgilendirmesinin içeriğine "şikayet edilen mesajlar 1 ay, şikayet bilgileri 1 yıl saklanır" ifadesini ekle ya da bunun Fonksiyonel Tasarım'da yazılacağını Açık Sorular'a koy. | New |
+
+### Summary
+
+Gereksinimler büyük oranda test edilebilir: her FR için Türkçe Gherkin ölçütleri, NFR'ler ölçülebilir hedefler ve onaylı sahip kararları (A, B, C) tutarlı biçimde yansıtılmış. `traceability.json`, requirements.md'deki tüm FR/NFR kimliklerini (FR1–FR21 ve alt kimlikleri, NFR1–NFR15) birebir listeliyor. Mühendisliğin başlamasını engelleyen Critical bulgu yok; onaydan önce iki Major boşluk (boş kazanma durumu ve kaybolan oturum belirteci) değerlendirilmeli, Minor çelişkiler Fonksiyonel Tasarım'da kapatılabilir.
