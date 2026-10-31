@@ -93,3 +93,4 @@
 <!-- Project-specific corrections from human feedback. -->
 <!-- Format: NEVER/ALWAYS [behavior] (learned [date]) -->
 - ALWAYS ayrıntılı ve küçük konuları sahibe sormadan kendin tasarla, makul varsayılanları seç; sahibe yalnızca büyük kararları sor, ardından kısa ve sade bir özet göster ki sahip onaylasın ya da düzeltme notu yazsın (sahip teknik değil; çok metin ve soru onu yoruyor). (learned 2026-10-31) <!-- cid:261030-gulyabani-v1:user-stories:22c0b0ca5e496f1209cb35c06f4fafa46529ed491914564f70b941ed9e3d5d09 -->
+- ALWAYS görünümle ilgili kararlarda (renk, tarz, ekran görünüşü) onayı resim (görsel örnek) göstererek iste. (learned 2026-10-31) <!-- cid:261030-gulyabani-v1:refined-mockups:4999aeaf764235e712fc904d7462f67986cd2a55f8126599244cff0a9c2a3472 -->

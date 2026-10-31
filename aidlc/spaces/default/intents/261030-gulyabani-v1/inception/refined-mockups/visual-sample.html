@@ -1,0 +1,339 @@
+<title>Gulyabani Görünüm Örneği</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Noto+Sans:wght@400;600;700&display=swap">
+<style>
+/* Düzen: sayfa sade bir tanıtım; asıl iş, iki temada dörder telefon ekranı. Telefon içleri oyunun kendi renk belirteçleriyle sabittir. */
+:root {
+  --page-bg: #EFE9DD;
+  --page-fg: #2A1E14;
+  --page-muted: #5C4B3B;
+  --page-line: #CDBFA8;
+  --page-chip: #E3D8C4;
+  --font: "Noto Sans", system-ui, -apple-system, "Segoe UI", sans-serif;
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --page-bg: #101322; --page-fg: #EDE6D8; --page-muted: #B7AFA0; --page-line: #353C5E; --page-chip: #232946;
+    color-scheme: dark;
+  }
+}
+:root[data-theme="dark"] {
+  --page-bg: #101322; --page-fg: #EDE6D8; --page-muted: #B7AFA0; --page-line: #353C5E; --page-chip: #232946;
+  color-scheme: dark;
+}
+
+/* Oyunun belirteçleri (design-system-mapping.md Renk Belirteçleri) */
+.night {
+  --bg: #14182B; --surface: #1F2540; --text: #F2EBDD; --muted: #BDB5A6;
+  --accent: #F2B544; --on-accent: #14182B; --border: #6B7299; --disabled: #8A8478;
+  --warning: #FFD27A; --side-g: #FF8A7A; --side-k: #9DB4FF; --kilim-a: #F2B544; --kilim-b: #FF8A7A;
+}
+.day {
+  --bg: #F5EEDF; --surface: #FFFBF3; --text: #2A1E14; --muted: #5C4B3B;
+  --accent: #8A3B0E; --on-accent: #FFFFFF; --border: #8C7A66; --disabled: #6B6054;
+  --warning: #7A4B00; --side-g: #A3262A; --side-k: #2F4A9E; --kilim-a: #8A3B0E; --kilim-b: #2F4A9E;
+}
+
+body {
+  margin: 0;
+  background: var(--page-bg);
+  color: var(--page-fg);
+  font-family: var(--font);
+  font-size: 16px;
+  line-height: 1.55;
+}
+.wrap {
+  max-width: 1320px;
+  margin: 0 auto;
+  padding-block: 32px 56px;
+  padding-left: max(16px, env(safe-area-inset-left, 0px));
+  padding-right: max(16px, env(safe-area-inset-right, 0px));
+  display: grid;
+  gap: 40px;
+}
+header { display: grid; gap: 10px; max-width: 68ch; }
+header h1 { margin: 0; font-size: 1.9rem; line-height: 1.2; text-wrap: balance; }
+header p { margin: 0; color: var(--page-muted); }
+.note {
+  background: var(--page-chip);
+  border-radius: 10px;
+  padding: 12px 14px;
+  color: var(--page-fg);
+  font-size: 0.95rem;
+}
+section.theme { display: grid; gap: 16px; }
+section.theme h2 { margin: 0; font-size: 1.3rem; }
+section.theme > p { margin: 0; color: var(--page-muted); max-width: 68ch; }
+.row { display: flex; flex-wrap: wrap; gap: 28px; align-items: flex-start; }
+figure { margin: 0; display: grid; gap: 10px; justify-items: start; }
+figcaption { font-size: 0.9rem; color: var(--page-muted); max-width: 300px; }
+figcaption b { color: var(--page-fg); }
+
+/* Telefon çerçevesi */
+.phone {
+  width: 300px;
+  max-width: 100%;
+  border-radius: 28px;
+  border: 8px solid #0B0E1A;
+  background: var(--bg);
+  color: var(--text);
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  height: 600px;
+  font-size: 15px;
+}
+.kilim {
+  height: 6px;
+  flex: none;
+  background:
+    linear-gradient(135deg, var(--kilim-a) 25%, transparent 25%) 0 0 / 12px 6px,
+    linear-gradient(225deg, var(--kilim-a) 25%, transparent 25%) 0 0 / 12px 6px,
+    linear-gradient(315deg, var(--kilim-b) 25%, transparent 25%) 6px 0 / 12px 6px,
+    linear-gradient(45deg, var(--kilim-b) 25%, transparent 25%) 6px 0 / 12px 6px,
+    var(--surface);
+}
+.topbar {
+  flex: none;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  padding: 12px 14px;
+  background-color: var(--surface);
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='60' height='24'%3E%3Cg stroke='%23888' stroke-opacity='.16' stroke-width='1.2' fill='none'%3E%3Cpath d='M2 6c8-2 14 1 22-1M30 4c7 2 15-1 26 1M4 15c9 1 13-2 21 0M33 13c8-1 12 2 24 0M1 21c7-1 15 1 20-1M28 22c10 1 15-2 30 0'/%3E%3C/g%3E%3C/svg%3E");
+  border-bottom: 1px solid var(--border);
+}
+.topbar .phase { font-weight: 700; font-size: 16px; }
+.topbar .right { display: flex; align-items: center; gap: 10px; }
+.timer { font-weight: 700; font-size: 18px; font-variant-numeric: tabular-nums; }
+.help {
+  width: 32px; height: 32px; border-radius: 50%;
+  border: 2px solid var(--border); display: grid; place-items: center;
+  font-weight: 700; font-size: 14px; color: var(--text);
+}
+.screen { flex: 1; min-height: 0; display: flex; flex-direction: column; padding: 14px; gap: 12px; overflow: hidden; }
+.screen h3 { margin: 0; font-size: 20px; line-height: 1.25; }
+.screen .sub { margin: 0; color: var(--muted); font-size: 14px; }
+
+/* Rol kartı */
+.card {
+  align-self: center;
+  width: 210px;
+  aspect-ratio: 5 / 7;
+  border-radius: 18px;
+  border: 3px solid var(--side-k);
+  background: var(--surface);
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+}
+.card .name { padding: 8px 12px 4px; font-weight: 700; font-size: 18px; letter-spacing: .06em; }
+.card .art { flex: 1; min-height: 0; display: grid; place-items: center; }
+.card .art svg { width: 100%; height: 100%; }
+.card .info { padding: 6px 12px 10px; display: grid; gap: 4px; font-size: 13px; line-height: 1.35; }
+.side { display: inline-flex; align-items: center; gap: 6px; font-weight: 600; color: var(--side-k); font-size: 13px; }
+.side svg { width: 14px; height: 16px; }
+.quote { font-style: italic; color: var(--muted); }
+.hint { text-align: center; color: var(--muted); font-size: 14px; margin: 0; }
+
+/* Düğmeler */
+.btn {
+  min-height: 48px; border-radius: 10px; border: 0;
+  background: var(--accent); color: var(--on-accent);
+  font: 600 16px/1 var(--font);
+  display: grid; place-items: center; width: 100%;
+}
+.btn.ghost { background: transparent; color: var(--text); border: 2px solid var(--border); }
+.foot { flex: none; padding: 0 14px 14px; display: grid; gap: 6px; }
+.foot small { color: var(--muted); font-size: 14px; }
+
+/* Sohbet */
+.chat { flex: 1; min-height: 0; display: flex; flex-direction: column; gap: 8px; overflow: hidden; }
+.msg { background: var(--surface); border: 1px solid var(--border); border-radius: 12px; padding: 7px 10px; font-size: 15px; line-height: 1.4; }
+.msg b { font-weight: 700; }
+.msg.mine { align-self: flex-end; border-color: var(--accent); }
+.msg.mod { border-style: dashed; }
+.composer { flex: none; display: flex; gap: 8px; align-items: stretch; }
+.field {
+  flex: 1; min-width: 0; min-height: 48px; border-radius: 10px;
+  border: 2px solid var(--border); background: var(--surface); color: var(--muted);
+  display: flex; align-items: center; padding: 0 10px; font-size: 15px;
+}
+.send { width: auto; padding: 0 14px; }
+.count { color: var(--muted); font-size: 14px; }
+.pick { display: grid; gap: 6px; }
+.opt {
+  display: flex; align-items: center; justify-content: space-between; gap: 8px;
+  min-height: 44px; padding: 0 10px; border-radius: 10px;
+  border: 1px solid var(--border); background: var(--surface); font-size: 15px;
+}
+.opt.sel { border: 2px solid var(--accent); font-weight: 600; }
+.opt .who { color: var(--muted); font-size: 13px; font-weight: 400; }
+.dot { width: 18px; height: 18px; border-radius: 50%; border: 2px solid var(--border); flex: none; display: grid; place-items: center; }
+.opt.sel .dot { border-color: var(--accent); }
+.opt.sel .dot::after { content: ""; width: 9px; height: 9px; border-radius: 50%; background: var(--accent); }
+.opt span.l { display: flex; align-items: center; gap: 10px; }
+.warn { color: var(--warning); font-size: 14px; display: flex; gap: 6px; align-items: center; }
+
+/* Alt sekme çubuğu */
+.tabs { flex: none; display: grid; grid-template-columns: repeat(4, 1fr); border-top: 1px solid var(--border); background: var(--surface); }
+.tab { min-height: 54px; display: grid; place-items: center; font-size: 13px; color: var(--muted); border-top: 3px solid transparent; }
+.tab.on { color: var(--text); font-weight: 700; border-top-color: var(--accent); }
+
+@media (max-width: 420px) {
+  .row { gap: 20px; }
+  .phone { height: 580px; }
+}
+</style>
+
+<div class="wrap">
+  <header>
+    <h1>Ekranlar böyle görünecek</h1>
+    <p>Onayladığın "halk sanatı esintili sade" görünümün iki temada örneği: gece (çivit ve gaz lambası sarısı) ve gündüz (toprak ve kerpiç). Renkler oyunda kullanılacak renklerin aynısıdır; bütün yazılar okunaklılık sınırının üstündedir.</p>
+    <p class="note">Kart çizimi geçicidir; asıl linol baskı çizimler sonra hazırlanacak. Üst şeritteki hafif çizgi dokusu ve panellerin üstündeki ince kilim şeridi süstür, anlam taşımaz.</p>
+  </header>
+
+  <section class="theme" aria-labelledby="gece">
+    <h2 id="gece">Gece teması</h2>
+    <p>Rol dağıtımı ve gece ekranları. Örnek oyun: Gece 2.</p>
+    <div class="row">
+      <figure>
+        <div class="phone night" role="img" aria-label="Gece teması, rol kartı ekranı: Bekçi kartı açık, altında Gördüm düğmesi">
+          <div class="kilim"></div>
+          <div class="topbar"><span class="phase">Rol Dağıtımı</span></div>
+          <div class="screen">
+            <p class="sub">Kartına bak, kimseye gösterme.</p>
+            <div class="card">
+              <div class="name">BEKÇİ</div>
+              <div class="art">
+                <svg viewBox="0 0 200 140" aria-hidden="true">
+                  <circle cx="150" cy="34" r="20" fill="#F2EBDD" opacity=".85"/>
+                  <path d="M0 120 L40 92 L70 104 L110 80 L150 100 L200 86 L200 140 L0 140 Z" fill="#14182B"/>
+                  <rect x="88" y="54" width="26" height="40" rx="5" fill="none" stroke="#F2B544" stroke-width="3"/>
+                  <path d="M92 54 Q101 42 110 54" fill="none" stroke="#F2B544" stroke-width="3"/>
+                  <ellipse cx="101" cy="76" rx="6" ry="9" fill="#F2B544"/>
+                  <path d="M60 128 q40 -10 80 0" stroke="#6B7299" stroke-width="2" fill="none"/>
+                </svg>
+              </div>
+              <div class="info">
+                <span class="side"><svg viewBox="0 0 14 16" aria-hidden="true"><rect x="3" y="4" width="8" height="10" rx="2" fill="none" stroke="currentColor" stroke-width="1.6"/><path d="M5 4 Q7 1 9 4" fill="none" stroke="currentColor" stroke-width="1.6"/><circle cx="7" cy="9" r="1.8" fill="currentColor"/></svg>Köylüler</span>
+                <span>Her gece bir evi yoklar.</span>
+                <span class="quote">"Yatağı boş olanın derdi büyük."</span>
+              </div>
+            </div>
+            <p class="hint">Kapatmak için tekrar dokun</p>
+          </div>
+          <div class="foot">
+            <div class="btn">Gördüm</div>
+            <small>4/9 oyuncu gördü</small>
+          </div>
+        </div>
+        <figcaption><b>Rol kartı (M-05).</b> Hakan'ın ekranı, kart açık. Taraf hem renkle hem fener simgesiyle hem de yazıyla gösterilir.</figcaption>
+      </figure>
+
+      <figure>
+        <div class="phone night" role="img" aria-label="Gece teması, gulyabanilerin ortak karar ekranı: Ali seçili, altında gulyabani sohbeti ve Kararı Onayla düğmesi">
+          <div class="kilim"></div>
+          <div class="topbar">
+            <span class="phase">Gece 2 · Gulyabaniler</span>
+            <span class="timer">1:12</span>
+          </div>
+          <div class="screen">
+            <h3>Kurbanı birlikte seçin</h3>
+            <div class="pick">
+              <div class="opt sel"><span class="l"><span class="dot"></span>Ali</span><span class="who">Zeynep, sen</span></div>
+              <div class="opt"><span class="l"><span class="dot"></span>Can</span></div>
+              <div class="opt"><span class="l"><span class="dot"></span>Deniz</span></div>
+            </div>
+            <div class="warn">! Pencerede bir gölge var</div>
+            <div class="chat">
+              <div class="msg"><b>Zeynep:</b> Ali olsun, bizi gördü</div>
+              <div class="msg mine"><b>Sen:</b> tamam, Ali</div>
+            </div>
+            <div class="composer"><div class="field">mesaj yaz…</div><div class="btn send">Gönder</div></div>
+          </div>
+          <div class="foot">
+            <div class="btn">Kararı Onayla</div>
+            <small>İkiniz de Ali'yi seçtiniz.</small>
+          </div>
+        </div>
+        <figcaption><b>Gece sohbeti (M-08).</b> Mert'in ekranı. Gece meydan sohbeti kapalıdır; gulyabaniler kendi aralarında yazışır. Listenin geri kalanı kaydırılınca görünür.</figcaption>
+      </figure>
+    </div>
+  </section>
+
+  <section class="theme" aria-labelledby="gunduz">
+    <h2 id="gunduz">Gündüz teması</h2>
+    <p>Lobi, gündüz, oyun sonu ve ana sayfa. Örnek oyun: Gündüz 2; Ali gece kaçırıldı.</p>
+    <div class="row">
+      <figure>
+        <div class="phone day" role="img" aria-label="Gündüz teması, Kartım sekmesi: Ahbaplar kartı açık, altında Ahbabın Gül rozeti">
+          <div class="kilim"></div>
+          <div class="topbar">
+            <span class="phase">Gündüz 2 · Meydan</span>
+            <span class="right"><span class="timer">3:12</span><span class="help">?</span></span>
+          </div>
+          <div class="screen">
+            <div class="card">
+              <div class="name">AHBAPLAR</div>
+              <div class="art">
+                <svg viewBox="0 0 200 140" aria-hidden="true">
+                  <circle cx="40" cy="30" r="16" fill="#E8B04A" opacity=".9"/>
+                  <path d="M0 118 L50 98 L100 108 L150 92 L200 104 L200 140 L0 140 Z" fill="#E3D3B8"/>
+                  <circle cx="82" cy="68" r="12" fill="none" stroke="#2F4A9E" stroke-width="3"/>
+                  <path d="M66 112 Q82 84 98 112" fill="none" stroke="#2F4A9E" stroke-width="3"/>
+                  <circle cx="122" cy="68" r="12" fill="none" stroke="#2F4A9E" stroke-width="3"/>
+                  <path d="M106 112 Q122 84 138 112" fill="none" stroke="#2F4A9E" stroke-width="3"/>
+                  <path d="M94 96 L110 96" stroke="#8A3B0E" stroke-width="3"/>
+                </svg>
+              </div>
+              <div class="info">
+                <span class="side"><svg viewBox="0 0 14 16" aria-hidden="true"><rect x="3" y="4" width="8" height="10" rx="2" fill="none" stroke="currentColor" stroke-width="1.6"/><path d="M5 4 Q7 1 9 4" fill="none" stroke="currentColor" stroke-width="1.6"/><circle cx="7" cy="9" r="1.8" fill="currentColor"/></svg>Köylüler</span>
+                <span>İlk gece birbirinizi tanırsınız.</span>
+                <span class="quote">"Yol arkadaşı yoldan önce gelir."</span>
+              </div>
+            </div>
+            <p class="hint">Ahbabın: Gül</p>
+          </div>
+          <div class="tabs">
+            <div class="tab">Oyuncular</div>
+            <div class="tab">Sohbet</div>
+            <div class="tab on">Kartım</div>
+            <div class="tab">Rehber</div>
+          </div>
+        </div>
+        <figcaption><b>Kartım (M-10).</b> Deniz'in ekranı, kart açık. Kart sekmeden çıkınca kendiliğinden kapanır.</figcaption>
+      </figure>
+
+      <figure>
+        <div class="phone day" role="img" aria-label="Gündüz teması, meydan sohbeti: dört mesaj, yazma alanı ve alt sekmeler">
+          <div class="kilim"></div>
+          <div class="topbar">
+            <span class="phase">Gündüz 2 · Meydan</span>
+            <span class="right"><span class="timer">3:12</span><span class="help">?</span></span>
+          </div>
+          <div class="screen">
+            <div class="chat">
+              <div class="msg"><b>Can:</b> Dün gece kim nerdeydi?</div>
+              <div class="msg"><b>Ece:</b> ben bir şey görmedim</div>
+              <div class="msg"><b>Hakan:</b> Bekçi olarak bir şey söyleyeceğim...</div>
+              <div class="msg"><b>Mert:</b> K****E diyemezsin bana</div>
+              <div class="msg mod"><b>Ayşe (moderatör):</b> 3 dakikanız var.</div>
+            </div>
+            <div class="composer"><div class="field">mesaj yaz…</div><div class="btn send">Gönder</div></div>
+            <span class="count">0/300</span>
+          </div>
+          <div class="tabs">
+            <div class="tab">Oyuncular</div>
+            <div class="tab on">Sohbet</div>
+            <div class="tab">Kartım</div>
+            <div class="tab">Rehber</div>
+          </div>
+        </div>
+        <figcaption><b>Meydan sohbeti (M-10).</b> Deniz'in ekranı. Ölü Ali burada yazmaz. Filtreye takılan kelime yıldızlı görünür.</figcaption>
+      </figure>
+    </div>
+  </section>
+</div>
