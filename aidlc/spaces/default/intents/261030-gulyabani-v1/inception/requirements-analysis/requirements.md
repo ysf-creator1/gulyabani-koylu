@@ -47,8 +47,8 @@ Kabul ölçütleri:
 Kaynak: intent-statement, scope-document (Oda ve lobi, Oyuncu sayısı), IB-01, tarif §4, W-03, W-04, F-01, F-10, C-06.
 
 - **FR2.1** Lobide herkes katılımcı listesini ve odada açık olan rolleri görür; kimin hangi rolü alacağı hiçbir yerde görünmez.
-- **FR2.2** Moderatör, onay sorusundan sonra moderatörlüğü lobideki başka bir katılımcıya devredebilir. Devir yalnızca lobide yapılır.
-- **FR2.3** Moderatör, onay sorusundan sonra bir oyuncuyu lobiden çıkarabilir; çıkarılan kişi "Moderatör seni odadan çıkardı." mesajını görür.
+- **FR2.2** Moderatör, onay sorusundan sonra moderatörlüğü lobideki başka bir katılımcıya devredebilir. Devir yalnızca lobide yapılır; moderatör kaybolduğunda ölü oyunculara geçiş FR14.5'tedir.
+- **FR2.3** Moderatör, onay sorusundan sonra lobideki ya da bekleme ekranındaki bir kişiyi çıkarabilir; çıkarılan kişi "Moderatör seni odadan çıkardı." mesajını görür ve aynı tarayıcıyla yeniden istek gönderebilir. Aynı tarayıcı aynı odadan, arada bir oyunda oynamadan art arda 2 kez çıkarılırsa 30 dakika boyunca o odaya istek gönderemez ("Bu odaya bir süre istek gönderemezsin. 30 dakika sonra tekrar dene."); sayaç kişi bir oyunda oynayınca sıfırlanır ve tanıma tarayıcıda saklanan oturum bilgisiyle yapılır (IP kullanılmaz, C-14). Moderatör lobide ve oyun sırasında "Yeni isteklere kapat" anahtarını açabilir: açıkken yeni gelen kimse bekleme ekranına geçemez ve yeniden katılma isteği gönderilemez, gelen kişi "Bu oda şu an yeni oyunculara kapalı." görür; bekleyenler ve odadakiler etkilenmez, anahtar yeni oyunda da açık kalır ve oyunculara durumu gösterilmez. (Ayrıntılı Taslaklar sahip düzeltmesi: interaction-spec "Bekleyenler ve Odayı Kapatma")
 - **FR2.4** Oyun en az 3, en fazla 26 oyuncuyla (moderatör hariç) başlatılabilir. 3'ten az oyuncuda "Oyunu Başlat" pasiftir ve "En az 3 oyuncu gerekli" yazar; 3–5 oyuncuda lobide "En iyi deneyim için en az 6 oyuncu önerilir" uyarısı görünür. Bekleme ekranındakiler dahil odadaki oyuncu sayısı 26'yı geçemez.
 - **FR2.5** İlk kez katılan oyuncuya lobide bir kez "Nasıl oynanır?" kartı gösterilir; kapatılabilir ve aynı tarayıcıda tekrar gösterilmez.
 - **FR2.6** Moderatör lobideki Ayarlar sekmesinden aşağıdaki ayarları değiştirebilir; her ayarın varsayılanı ve izinli aralığı tablodaki gibidir. Aralık dışı değer kabul edilmez.
@@ -246,7 +246,7 @@ Kaynak: intent-statement, scope-document (Bağlantı), IB-03, tarif §15, §16, 
 - **FR14.2** Bağlantı koptuğunda ekranda "Yeniden bağlanılıyor" şeridi, geri geldiğinde "Tekrar oyundasın" görünür. Bağlantı 60 saniyede kurulamazsa "Bağlanamadık. İnternetini kontrol edip sayfayı yenile." yazar. Şeritte "Sorun bildir" düğmesi bulunur (FR17.5).
 - **FR14.3** Moderatör ekranında kopuk oyuncunun yanında "kopuk" yazar; oyuncu dönünce kalkar.
 - **FR14.4** Kopan oyuncunun kendisinin bir şey yapması gereken her adımda (oy, gece seçimi, son söz, Celalli Damat seçimi) o adımın süresi kendiliğinden en fazla 5 dakikaya uzar. Oyuncu dönerse kaldığı yerden devam eder. Dönmezse adım onsuz biter: oyu sayılmaz, gece seçimi boş geçer; oylar onda toplanırsa infaz edilir. Sonraki gece ya da gündüz başladığında hâlâ kopuksa moderatörün ekranında "X hâlâ kopuk, oyundan çıkarılsın mı?" uyarısı çıkar; karar moderatöründür ve çıkarılırsa FR15.2 geçerlidir. [Q7] [Q15]
-- **FR14.5** Moderatörün bağlantısı koparsa oyun ve tüm sayaçlar duraklar, oyunculara "Moderatör bekleniyor" yazar. Moderatör aynı linkle dönünce oyun kaldığı yerden sürer; oda silinene kadar beklenir. [Q6]
+- **FR14.5** Moderatörün bağlantısı koparsa oyun ve tüm sayaçlar duraklar; herkes "Moderatör bekleniyor. Oyun duraklatıldı." yazısını ve 3 dakikalık geri sayımı görür. Moderatör aynı linkle dönerse oyun kaldığı yerden sürer. 3 dakika dolunca en az bir ölü oyuncu varsa bütün ölülere "Moderatör ol" teklifi gider (düğmeler 10 saniye sonra açılır); ilk kabul eden moderatör olur, diğer teklifler kapanır ve oyun duraklamış açılır. Teklif 3 dakika içinde kabul edilmezse, bütün ölüler reddederse ya da hiç ölü oyuncu yoksa herkes "Moderatör yok" ekranını görür ([Yeni oda kur] [Oyundan çık]); roller açılmaz. Eski moderatör yeni moderatör seçilmeden dönerse oyun onunla sürer; seçildikten sonra dönerse oyunu izleyici olarak görür. Yeni moderatör oyun sırasında, onay sorusundan sonra moderatörlüğü başka bir ölü oyuncuya ya da dönen eski moderatöre devredebilir; seçilen kişi reddederse moderatörlük devredende kalır. Moderatör olan ölü oyuncu Mezarlık Sohbeti'ne yazmaz, yalnızca okur. Yürüyen iskelette bu kural yoktur; moderatör dönene kadar beklenir. [Q6] (Ayrıntılı Taslaklar sahip düzeltmesi M-18 ve interaction-spec "Moderatör Kaybolursa"; teklif süresi: domain-design Q1)
 - **FR14.6** Sunucu yeniden başlarsa (güncelleme ya da arıza) süren oyunlar kaybolmaz: kabul edilmiş her işlem (oy, seçim, faz geçişi) korunur, oyuncular aynı linkle döner ve oyun kaldığı yerden sürer; sayaçlar kalan süreyle devam eder. [Q10]
 - **FR14.7** Aynı oyuncu oyunu ikinci bir sekmede ya da cihazda açarsa son açılan bağlantı oyunu devralır; eski sekmede "Oyun başka bir pencerede açıldı" yazar.
 - **FR14.8** Tüm süreler sunucuda bitiş zamanı olarak tutulur; istemciler geri sayımı sunucu saatine göre çizer.
@@ -255,6 +255,8 @@ Kabul ölçütleri:
 - **Diyelim ki** oyuncu oyun sırasında sayfayı yeniledi, **O zaman** rolünü ve oyun durumunu kaybetmez. (tarif §16)
 - **Diyelim ki** Ali oylama sırasında koptu, **Eğer ki** 5 dakika içinde dönmezse, **O zaman** oylama Ali'nin oyu olmadan biter **Ve** sonraki faz başlarken moderatöre "Ali hâlâ kopuk, oyundan çıkarılsın mı?" uyarısı çıkar.
 - **Diyelim ki** moderatörün bağlantısı koptu, **O zaman** oyuncuların sayaçları durur **Ve** "Moderatör bekleniyor" görünür; moderatör dönünce sayaçlar kalan süreden devam eder.
+- **Diyelim ki** moderatör 3 dakikadır dönmedi ve hiç ölü oyuncu yok, **O zaman** herkes "Moderatör yok" ekranını görür **Ve** hiçbir rol açılmaz.
+- **Diyelim ki** ölülere moderatörlük teklifi gitti, **Eğer ki** 3 dakika içinde kimse kabul etmezse, **O zaman** herkes "Moderatör yok" ekranını görür.
 - **Diyelim ki** gündüz oylaması sırasında sunucu yeniden başladı, **Eğer ki** oyuncular aynı linkle dönerse, **O zaman** önceden verilmiş oylar korunur **Ve** oylama kalan süreyle sürer.
 
 ### FR15 — Oyun sırasında oyuncu çıkarma
@@ -443,7 +445,7 @@ Bu varsayımlar sorulmadı; makul varsayılan olarak yazıldı. Onay kapısında
 - Oyun içinde sesli/görüntülü konuşma: oyuncular ayrı bir toplantı uygulaması kullanır (ASM-01 teyit edildi). [Q14]
 - Gece sırası için titreşim, ses ve ekran okuyucu duyurusu. [Q14] [Q17]
 - Hesap, şifre ve kalıcı kullanıcı profili. (tarif §3)
-- Oyun sırasında moderatörlük devri. (tarif §4)
+- Oyun sırasında moderatörlük devri; tek istisna moderatör kaybolduğunda ölü oyunculara geçiş ve onların kendi aralarında devri (FR14.5). (tarif §4)
 
 ## Açık Sorular
 
