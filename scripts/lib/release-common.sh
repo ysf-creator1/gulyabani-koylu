@@ -104,7 +104,8 @@ prune_releases() {
   remote "sudo bash -s" <<EOF
 set -euo pipefail
 keep="\$(basename "\$(readlink -f '$CURRENT')")"
-ls -1t '$RELEASES' | grep -v '^\.' | grep -v "^\$keep\$" | tail -n +3 | while read -r old; do
+# Silinecek sürüm yoksa grep 1 döner; pipefail bunu hata saymasın (ilk yayında görülen hata).
+{ ls -1t '$RELEASES' | grep -v '^\.' | grep -v "^\$keep\$" || true; } | tail -n +3 | while read -r old; do
   rm -rf "$RELEASES/\$old"
 done
 EOF
