@@ -1,0 +1,79 @@
+/* Ekran düzenleri (mockups M-01…M-17). Uyku ekranı her genişlikte aynıdır (BR4.7). */
+.screen {
+  max-width: 640px;
+  margin: 0 auto;
+}
+
+.sleep {
+  min-height: 70vh;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+}
+
+.code-box {
+  font: var(--font-title);
+  letter-spacing: 0.15em;
+  font-variant-numeric: tabular-nums;
+}
+
+.link-box {
+  overflow-wrap: anywhere;
+  font: var(--font-small);
+}
+
+.mod-tabs {
+  display: flex;
+  gap: var(--space-2);
+  margin-bottom: var(--space-3);
+  overflow-x: auto;
+}
+
+.mod-tabs [role='tab'] {
+  flex: 1 0 auto;
+}
+
+.mod-tabs [role='tab'][aria-selected='true'] {
+  background: var(--color-accent);
+  color: var(--color-on-accent);
+}
+
+.mod-panel {
+  display: none;
+}
+
+.mod-panel.is-active {
+  display: block;
+}
+
+.announcement {
+  font: var(--font-announce);
+}
+
+@media (min-width: 1024px) {
+  .screen--wide {
+    max-width: none;
+  }
+
+  .mod-tabs {
+    display: none;
+  }
+
+  .mod-columns {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: var(--space-4);
+  }
+
+  .mod-panel {
+    display: block;
+  }
+}
+
+@media (min-width: 1200px) {
+  .mod-columns {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+  }
+}

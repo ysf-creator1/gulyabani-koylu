@@ -1,0 +1,475 @@
+{
+  "stage": "functional-design",
+  "unit": "u1-walking-skeleton",
+  "upstream_ids": [
+    "AC1.1.1",
+    "AC1.1.2",
+    "AC1.1.3",
+    "AC1.2.1",
+    "AC1.2.2",
+    "AC1.2.3",
+    "AC1.2.4",
+    "AC1.4.1",
+    "AC1.4.2",
+    "AC1.4.3",
+    "AC1.4.4",
+    "AC2.2.1",
+    "AC2.2.2",
+    "AC2.2.3",
+    "AC2.2.4",
+    "AC3.1.1",
+    "AC3.1.2",
+    "AC3.1.3",
+    "AC3.1.4",
+    "AC3.2.1",
+    "AC3.2.2",
+    "AC3.2.3",
+    "AC3.3.1",
+    "AC3.3.2",
+    "AC3.3.3",
+    "AC3.3.4",
+    "AC4.1.1",
+    "AC4.1.2",
+    "AC4.1.3",
+    "AC4.2.1",
+    "AC4.2.2",
+    "AC4.2.3",
+    "AC5.1.1",
+    "AC5.1.2",
+    "AC5.1.3",
+    "AC5.1.4",
+    "AC5.2.1",
+    "AC5.2.2",
+    "AC5.2.3",
+    "AC5.2.4",
+    "AC5.3.1",
+    "AC5.3.2",
+    "AC5.3.3",
+    "AC5.3.4",
+    "AC5.4.1",
+    "AC5.4.2",
+    "AC5.4.3",
+    "AC7.1.1",
+    "AC7.1.2",
+    "AC7.1.3",
+    "AC7.1.4",
+    "AC7.2.1",
+    "AC7.2.2",
+    "AC7.2.3",
+    "AC9.1.1",
+    "AC9.1.2",
+    "AC9.1.3",
+    "AC9.1.4",
+    "AC13.1.1",
+    "AC13.1.2",
+    "AC13.1.3",
+    "AC13.3.1",
+    "AC13.3.2",
+    "AC13.3.3",
+    "AC13.4.1",
+    "AC13.4.2",
+    "AC13.5.1",
+    "AC13.5.2",
+    "AC13.5.3",
+    "AC13.5.4"
+  ],
+  "coverage": [
+    {
+      "id": "AC1.1.1",
+      "status": "OK",
+      "target": "BR1.5"
+    },
+    {
+      "id": "AC1.1.2",
+      "status": "OK",
+      "target": "BR1.1, BR1.2"
+    },
+    {
+      "id": "AC1.1.3",
+      "status": "OK",
+      "target": "BR1.1"
+    },
+    {
+      "id": "AC1.2.1",
+      "status": "OK",
+      "target": "BR1.3, BR1.5"
+    },
+    {
+      "id": "AC1.2.2",
+      "status": "OK",
+      "target": "BR1.3"
+    },
+    {
+      "id": "AC1.2.3",
+      "status": "OK",
+      "target": "BR1.3"
+    },
+    {
+      "id": "AC1.2.4",
+      "status": "OK",
+      "target": "BR1.4, BR12.1, BR12.3"
+    },
+    {
+      "id": "AC1.4.1",
+      "status": "OK",
+      "target": "BR2.1"
+    },
+    {
+      "id": "AC1.4.2",
+      "status": "OK",
+      "target": "BR2.1"
+    },
+    {
+      "id": "AC1.4.3",
+      "status": "OK",
+      "target": "BR2.3"
+    },
+    {
+      "id": "AC1.4.4",
+      "status": "N/A",
+      "target": "delivered by u2-room-and-lobby (lobide moderatörlük devri, FR2.2; contract-summary C1 lobby.transferModerator U2)"
+    },
+    {
+      "id": "AC2.2.1",
+      "status": "OK",
+      "target": "BR3.3"
+    },
+    {
+      "id": "AC2.2.2",
+      "status": "OK",
+      "target": "BR11.1"
+    },
+    {
+      "id": "AC2.2.3",
+      "status": "OK",
+      "target": "BR3.3, BR11.5"
+    },
+    {
+      "id": "AC2.2.4",
+      "status": "OK",
+      "target": "BR3.2"
+    },
+    {
+      "id": "AC3.1.1",
+      "status": "OK",
+      "target": "BR4.1, BR4.3"
+    },
+    {
+      "id": "AC3.1.2",
+      "status": "OK",
+      "target": "BR4.3"
+    },
+    {
+      "id": "AC3.1.3",
+      "status": "N/A",
+      "target": "delivered by u3-role-abilities (kapalı ve ölü rol adımlarının atlanması, FR5.3; iskelette özel rol yok)"
+    },
+    {
+      "id": "AC3.1.4",
+      "status": "OK",
+      "target": "BR4.6"
+    },
+    {
+      "id": "AC3.2.1",
+      "status": "OK",
+      "target": "BR4.7"
+    },
+    {
+      "id": "AC3.2.2",
+      "status": "OK",
+      "target": "BR4.7"
+    },
+    {
+      "id": "AC3.2.3",
+      "status": "OK",
+      "target": "BR4.4"
+    },
+    {
+      "id": "AC3.3.1",
+      "status": "OK",
+      "target": "BR4.2, BR4.5, BR4.8, BR11.2"
+    },
+    {
+      "id": "AC3.3.2",
+      "status": "OK",
+      "target": "BR4.5"
+    },
+    {
+      "id": "AC3.3.3",
+      "status": "OK",
+      "target": "BR4.6, BR10.6"
+    },
+    {
+      "id": "AC3.3.4",
+      "status": "OK",
+      "target": "BR4.6, BR10.6"
+    },
+    {
+      "id": "AC4.1.1",
+      "status": "OK",
+      "target": "BR5.1"
+    },
+    {
+      "id": "AC4.1.2",
+      "status": "OK",
+      "target": "BR5.1"
+    },
+    {
+      "id": "AC4.1.3",
+      "status": "OK",
+      "target": "BR5.3"
+    },
+    {
+      "id": "AC4.2.1",
+      "status": "OK",
+      "target": "BR5.2"
+    },
+    {
+      "id": "AC4.2.2",
+      "status": "N/A",
+      "target": "delivered by u3-role-abilities (sevdalı ölümü, FR7.2, FR10.8; unit-of-work-story-map US4.2 paylaşımı)"
+    },
+    {
+      "id": "AC4.2.3",
+      "status": "OK",
+      "target": "BR5.2"
+    },
+    {
+      "id": "AC5.1.1",
+      "status": "OK",
+      "target": "BR6.1"
+    },
+    {
+      "id": "AC5.1.2",
+      "status": "OK",
+      "target": "BR6.2"
+    },
+    {
+      "id": "AC5.1.3",
+      "status": "OK",
+      "target": "BR6.3, BR8.3, BR10.8"
+    },
+    {
+      "id": "AC5.1.4",
+      "status": "OK",
+      "target": "BR6.4"
+    },
+    {
+      "id": "AC5.2.1",
+      "status": "OK",
+      "target": "BR6.5, BR11.3"
+    },
+    {
+      "id": "AC5.2.2",
+      "status": "OK",
+      "target": "BR6.5, BR6.6, BR6.11"
+    },
+    {
+      "id": "AC5.2.3",
+      "status": "OK",
+      "target": "BR6.7"
+    },
+    {
+      "id": "AC5.2.4",
+      "status": "N/A",
+      "target": "delivered by u2-room-and-lobby (köyün en genci kuralı, FR2.7; contract-summary C1 lobby.markYoungest U2)"
+    },
+    {
+      "id": "AC5.3.1",
+      "status": "OK",
+      "target": "BR6.4"
+    },
+    {
+      "id": "AC5.3.2",
+      "status": "OK",
+      "target": "BR6.8, BR6.9, BR10.6"
+    },
+    {
+      "id": "AC5.3.3",
+      "status": "OK",
+      "target": "BR6.8, BR10.6"
+    },
+    {
+      "id": "AC5.3.4",
+      "status": "OK",
+      "target": "BR6.7, BR6.8"
+    },
+    {
+      "id": "AC5.4.1",
+      "status": "OK",
+      "target": "BR6.10"
+    },
+    {
+      "id": "AC5.4.2",
+      "status": "OK",
+      "target": "BR8.1, BR9.3"
+    },
+    {
+      "id": "AC5.4.3",
+      "status": "OK",
+      "target": "BR8.1"
+    },
+    {
+      "id": "AC7.1.1",
+      "status": "OK",
+      "target": "BR7.1"
+    },
+    {
+      "id": "AC7.1.2",
+      "status": "OK",
+      "target": "BR7.1"
+    },
+    {
+      "id": "AC7.1.3",
+      "status": "N/A",
+      "target": "delivered by u3-role-abilities (karışık sevdalı çift kazanması, FR11.1 madde 2 ve 5)"
+    },
+    {
+      "id": "AC7.1.4",
+      "status": "OK",
+      "target": "BR7.1"
+    },
+    {
+      "id": "AC7.2.1",
+      "status": "OK",
+      "target": "BR7.2, BR11.4"
+    },
+    {
+      "id": "AC7.2.2",
+      "status": "OK",
+      "target": "BR7.3"
+    },
+    {
+      "id": "AC7.2.3",
+      "status": "N/A",
+      "target": "delivered by u2-room-and-lobby (22 saat kuralı, FR17.2; contract-summary room_expiring U2)"
+    },
+    {
+      "id": "AC9.1.1",
+      "status": "OK",
+      "target": "BR9.1, BR10.5"
+    },
+    {
+      "id": "AC9.1.2",
+      "status": "OK",
+      "target": "BR9.2"
+    },
+    {
+      "id": "AC9.1.3",
+      "status": "N/A",
+      "target": "delivered by u7-records-feedback-report (Sorun bildir kaydı, FR17.5)"
+    },
+    {
+      "id": "AC9.1.4",
+      "status": "OK",
+      "target": "BR9.1, BR9.2"
+    },
+    {
+      "id": "AC13.1.1",
+      "status": "N/A",
+      "target": "delivered by u8-quality-and-load (görünürlük tablosunun tamamı, US13.1 U8 payı); iskeletteki bilgiler BR11.1-BR11.5 ile sınanır"
+    },
+    {
+      "id": "AC13.1.2",
+      "status": "OK",
+      "target": "BR11.3"
+    },
+    {
+      "id": "AC13.1.3",
+      "status": "OK",
+      "target": "BR11.4, BR7.2"
+    },
+    {
+      "id": "AC13.3.1",
+      "status": "OK",
+      "target": "BR13.2"
+    },
+    {
+      "id": "AC13.3.2",
+      "status": "N/A",
+      "target": "delivered by u8-quality-and-load (desteklenmeyen tarayıcı uyarısı, US13.3 U8 payı)"
+    },
+    {
+      "id": "AC13.3.3",
+      "status": "OK",
+      "target": "BR13.1"
+    },
+    {
+      "id": "AC13.4.1",
+      "status": "N/A",
+      "target": "delivered by u8-quality-and-load (50 odalık yük testi, US13.4 U8 payı)"
+    },
+    {
+      "id": "AC13.4.2",
+      "status": "OK",
+      "target": "BR9.6, BR6.1"
+    },
+    {
+      "id": "AC13.5.1",
+      "status": "OK",
+      "target": "BR10.1, BR2.2, BR4.9, BR10.7"
+    },
+    {
+      "id": "AC13.5.2",
+      "status": "OK",
+      "target": "BR10.3"
+    },
+    {
+      "id": "AC13.5.3",
+      "status": "OK",
+      "target": "BR10.2, BR6.5"
+    },
+    {
+      "id": "AC13.5.4",
+      "status": "OK",
+      "target": "BR9.5"
+    }
+  ],
+  "reverse": [
+    {
+      "id": "BR1.6",
+      "status": "N/A",
+      "target": "İskelet geçici kuralı (FR1.6); U2 bekleme ekranıyla değiştirir"
+    },
+    {
+      "id": "BR2.4",
+      "status": "N/A",
+      "target": "Lobi görünümü kuralı (FR2.1); US1.4 kabul ölçütlerinde ayrı satırı yok"
+    },
+    {
+      "id": "BR3.1",
+      "status": "N/A",
+      "target": "İskelet varsayılanı (FR3.3 önerilen sayılar, özet onayı); rol havuzu paneli U2'de"
+    },
+    {
+      "id": "BR8.2",
+      "status": "N/A",
+      "target": "FR14.5 iskelet notu: moderatör dönene kadar beklenir; US9.3 U5'te"
+    },
+    {
+      "id": "BR9.4",
+      "status": "N/A",
+      "target": "C1 iskelet kuralı: son bağlantı geçerli; FR14.7 uyarısı U5'te"
+    },
+    {
+      "id": "BR10.4",
+      "status": "N/A",
+      "target": "FR20.2 ve project.md Forbidden; IP'siz kayıt testleri U7'de"
+    },
+    {
+      "id": "BR12.2",
+      "status": "N/A",
+      "target": "C2 sağlık kontrolü (dışarıya status+version, sayılar yalnızca 127.0.0.1, sorunda 503) ve bolt-plan B1 koruması (NFR13)"
+    },
+    {
+      "id": "BR13.3",
+      "status": "N/A",
+      "target": "project.md Mandated WCAG 2.1 AA (NFR9); US13.2 U8'de denetlenir"
+    },
+    {
+      "id": "BR2.5",
+      "status": "N/A",
+      "target": "İskelet kuralı: C1'de ayrılma komutu yok (FR2.3, FR14.1); Alan Tasarımı incelemesi R-09"
+    }
+  ]
+}

@@ -1,0 +1,58 @@
+# Gulyabani – Köylü oyun programı (infrastructure-specification.md "Oyun programının hizmet birimi")
+[Unit]
+Description=Gulyabani Koylu oyun sunucusu
+After=network-online.target
+Wants=network-online.target
+# Hizmet kalıcı "başarısız" durumuna düşmesin
+StartLimitIntervalSec=0
+
+[Service]
+Type=simple
+User=gulyabani
+Group=gulyabani
+WorkingDirectory=/opt/gulyabani/current
+ExecStart=/usr/local/bin/node --max-old-space-size=288 dist/server/main.js
+EnvironmentFile=/etc/gulyabani/gulyabani.env
+EnvironmentFile=/etc/gulyabani/version.env
+EnvironmentFile=-/etc/gulyabani/secrets.env
+
+# Çökmeden 2 sn sonra yeniden başlat; art arda çökmede bekleme 60 sn'ye kadar artar
+Restart=always
+RestartSec=2
+RestartSteps=5
+RestartMaxDelaySec=60
+
+# Planlı kapanış
+KillSignal=SIGTERM
+TimeoutStopSec=10
+
+# Kaynak sınırları
+MemoryMax=512M
+LimitNOFILE=8192
+
+# Veri klasörü ve dosya izinleri
+UMask=0077
+StateDirectory=gulyabani
+StateDirectoryMode=0700
+
+# Sertleştirme
+NoNewPrivileges=yes
+ProtectSystem=strict
+ProtectHome=yes
+PrivateTmp=yes
+PrivateDevices=yes
+CapabilityBoundingSet=
+AmbientCapabilities=
+RestrictAddressFamilies=AF_INET AF_INET6 AF_UNIX
+ProtectKernelTunables=yes
+ProtectKernelModules=yes
+ProtectControlGroups=yes
+RestrictSUIDSGID=yes
+LockPersonality=yes
+RestrictRealtime=yes
+
+StandardOutput=journal
+StandardError=journal
+
+[Install]
+WantedBy=multi-user.target

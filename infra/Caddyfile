@@ -1,0 +1,29 @@
+# Gulyabani – Köylü: Caddy ayarı
+# Caddy yalnızca TLS, HTTP→HTTPS yönlendirmesi (308) ve 127.0.0.1:8080'e iletme yapar.
+# İç kapı (8081) hiç iletilmez. Alt adres GULYABANI_HOST ortam değişkeninden gelir
+# (/etc/systemd/system/caddy.service.d/gulyabani.conf).
+{
+	# Oyuncu IP adresi hiçbir günlüğe düşmemeli (project.md Forbidden, NFR7.11).
+	# Erişim günlüğü yok; "TLS handshake error from <adres>" satırları (http.stdlib) dışlanır;
+	# hata satırlarındaki istek alanlarından adres ve başlıklar silinir.
+	log default {
+		output stderr
+		format filter {
+			wrap json
+			fields {
+				request>remote_ip delete
+				request>remote_port delete
+				request>client_ip delete
+				request>headers delete
+			}
+		}
+		level ERROR
+		exclude http.log.access http.stdlib
+	}
+}
+
+{$GULYABANI_HOST} {
+	header -Server
+	header -Via
+	reverse_proxy 127.0.0.1:8080
+}

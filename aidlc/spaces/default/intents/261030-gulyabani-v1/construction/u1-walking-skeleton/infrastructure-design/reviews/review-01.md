@@ -1,0 +1,28 @@
+## Review
+
+**Verdict:** READY
+**Reviewer:** aidlc-architecture-reviewer-agent
+**Date:** 2026-11-02T14:57:48Z
+**Iteration:** 1
+**Verdict Dictated:** no
+
+### Findings
+
+| ID | Severity | Location | Finding | Required action | Status |
+|---|---|---|---|---|---|
+| R-01 | Major | aidlc/spaces/default/intents/261030-gulyabani-v1/construction/u1-walking-skeleton/infrastructure-design/infrastructure-specification.md > Caddy ayarı (`log default { level ERROR ... }`) ve "İskelet Denetiminde Sunucuda Yapılacak Kontroller" NFR7.11 satırı | Caddy çalışma günlüğü `ERROR` düzeyinde açık bırakılmış. `http.log.access` ve `http.stdlib` dışlanıyor ama `reverse_proxy` hataları ("dial tcp 127.0.0.1:8080: connection refused", WebSocket iletme hataları) `ERROR` düzeyinde yazılır ve istek nesnesiyle birlikte `remote_ip`/`client_ip` alanlarını taşıyabilir. Bu satırlar tam da oyun programı yeniden başlarken (her yayın, her çökme, `kill -9` denemesi) üretilir; yani oyuncu IP'si 7 günlük sistem günlüğüne düşebilir (project.md Forbidden: IP'yi günlükte saklama; NFR7.11). Tek seferlik iskelet taraması bot oyunu ve telefon denemesinden sonra yapıldığı için uygulama kapalıyken gelen isteklerin ürettiği satırları yakalamayı garanti etmez. | Caddy günlüğünü kaynağında kapat (`output discard`) ya da `filter` kodlayıcısıyla `request>remote_ip`, `request>client_ip`, `request>headers` alanlarını sil; çalışma günlüğünü açık bırakıyorsan IP taramasını, uygulama kapalıyken (hizmet durdurulmuşken) Caddy'ye istek gönderilen bir senaryodan sonra da yap ve bunu İskelet Denetimi tablosuna ve CI/yayın sonrası kontrole ekle. | New |
+| R-02 | Major | aidlc/spaces/default/intents/261030-gulyabani-v1/construction/u1-walking-skeleton/infrastructure-design/traceability.json > `upstream_ids` / `coverage` | Bu Birimin NFR tasarımı 66 NFR kimliği listeliyor, bu izlenebilirlik dosyası 60 tanesini kapsıyor. Eksik olanlar: NFR5.8, NFR11.1, NFR12.1, NFR12.3, NFR13.5, NFR13.7. Bunlardan NFR11.1, NFR12.1, NFR12.3 `cicd-pipeline.md` kapı tablosunda açıkça kaynak gösteriliyor, NFR13.5 `monitoring-design.md` SLO bölümünde kullanılıyor; yani tasarım bunları karşılıyor ama izlenebilirlik kaydında yoklar. | Eksik altı kimliği `upstream_ids` ve `coverage` içine ekle (NFR11.1, NFR12.1, NFR12.3: cicd-pipeline kapıları; NFR13.5: monitoring-design SLIs / SLOs; NFR5.8 ve NFR13.7: gerekçesiyle `N/A` ya da ilgili belgeye eşleme). Dosyayı `aidlc engine sensor-traceability ... --write-upstream` ile yeniden üretip eşlemeleri doldur. | New |
+| R-03 | Minor | aidlc/spaces/default/intents/261030-gulyabani-v1/construction/u1-walking-skeleton/infrastructure-design/cicd-pipeline.md > Geri Alma ve Yayın adım 9 | Otomatik geri alma, yayın sonrası kontrol (adım 9) başarısız olunca tetikleniyor; ama kontrol sahibin bilgisayarından, internet/DNS üzerinden yapıldığı için sahibin kendi ağ sorunu da sağlam bir sürümü geri aldırır. Ayrıca adım 8-9 sürerken hizmet canlıdır, bu sürede başlayan bir oyun varsa geri alma yeniden başlatması `activeMatches` denetimi olmadan o oyunu ≤ 30 sn duraklatır. | Adım 9 başarısızlığında geri almadan önce sunucu içinden iç `/healthz` ile ikinci bir doğrulama yap (yalnızca dış denetim başarısız, iç denetim sağlıklıysa geri alma yerine uyar); geri alma yeniden başlatmasının oyun duraklatmasını kabul edilen pencere olarak "Kalan küçük pencere" notuna ekle. | New |
+| R-04 | Minor | aidlc/spaces/default/intents/261030-gulyabani-v1/construction/u1-walking-skeleton/infrastructure-design/cicd-pipeline.md > Sürüm Etiketi ve Sürüm Paketi (`verify` işi) ve Dallar ve Tetikleyiciler | `release.yml` içindeki `verify` işi "`ci.yml` yeniden kullanılır" diyor; bunun çalışması için `ci.yml`'nin `workflow_call` ile çağrılabilir olması gerekir, ama tetikleyici tablosunda yalnızca `bolt/**`, `main`, elle başlatma var. | Tetikleyici tablosuna `workflow_call` (yeniden kullanılabilir iş akışı) satırını ekle. | New |
+| R-05 | Minor | aidlc/spaces/default/intents/261030-gulyabani-v1/construction/u1-walking-skeleton/infrastructure-design/infrastructure-specification.md > Oyun programının hizmet birimi, `WorkingDirectory=/opt/gulyabani/current` | İlk kurulumda `provision.sh` hizmeti etkinleştirirse `current` bağı henüz yoktur; hizmet `Restart=always`, `StartLimitIntervalSec=0` ile bekleme süresi artarak sürekli çöker ve sistem günlüğünü doldurur. Cicd tarafında "program yanıt vermiyorsa devam" kuralı bu durumu yalnızca yayın betiği için karşılıyor. | `provision.sh`'ın hizmeti yalnızca ilk yayın `current` bağını kurduktan sonra başlatmasını (ya da `ConditionPathExists=/opt/gulyabani/current` kullanmasını) tasarıma yaz. | New |
+
+### Validation Tool Results
+
+| Tool | Result | Interpretation |
+|---|---|---|
+| `python3 -I -m json.tool` (traceability.json) | PASS: geçerli JSON | Biçim sağlam; 60 `upstream_ids` ile 60 `coverage` satırı birebir eşleşiyor, GAP yok |
+| Kapsam karşılaştırması: nfr-design/traceability.json (66 kimlik) ile bu dosya | Fark: NFR5.8, NFR11.1, NFR12.1, NFR12.3, NFR13.5, NFR13.7 eksik | İkinci Major bulguyu doğrular |
+
+### Summary
+
+Tasarım bütünlüğü sağlam: yayın, kapı, sır ve geri alma zinciri takım kurallarıyla (tek sunucu, elle onay, etiket, otomatik yayın yok, sıfır maliyet) ve yukarı akış sözleşmeleriyle (C2 `activeMatches`, `--check-config`, iç/dış `/healthz`) tutarlı, çevrim ya da kırık bağ yok. Kalan iki Major, Caddy `ERROR` günlüğünün yeniden başlatma anlarında IP sızdırma riski ve eksik altı NFR kimliğinin izlenebilirlik kaydına eklenmesi; ikisi de küçük düzeltmeyle kapanır ve eşik (≤ 2 Major, 0 Critical) altında olduğu için sonuç READY, ancak bu iki bulgunun onay öncesi kapatılması önerilir.

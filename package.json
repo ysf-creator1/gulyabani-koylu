@@ -1,0 +1,54 @@
+{
+  "name": "gulyabani-koylu",
+  "version": "0.1.0",
+  "private": true,
+  "description": "Gulyabani – Köylü: arkadaş grupları için tarayıcıda oynanan Türkçe rol oyunu (yürüyen iskelet)",
+  "type": "module",
+  "engines": {
+    "node": "24.22.2"
+  },
+  "scripts": {
+    "dev": "npm run build:web && node scripts/dev.ts",
+    "build": "npm run build:server && npm run build:web",
+    "build:server": "tsc -p tsconfig.server.json && mkdir -p dist/server/store/migrations && cp src/server/store/migrations/*.sql dist/server/store/migrations/",
+    "build:web": "vite build",
+    "typecheck": "tsc --noEmit -p tsconfig.json",
+    "lint": "eslint .",
+    "format:check": "prettier --check .",
+    "check:migrations": "node scripts/check-migrations.ts",
+    "check:bundle": "node scripts/check-bundle.ts",
+    "test": "vitest run tests/",
+    "test:e2e": "vitest run --config vitest.e2e.config.ts tests/",
+    "test:a11y": "playwright test",
+    "verify": "node scripts/verify.ts"
+  },
+  "dependencies": {
+    "better-sqlite3": "^12.11.1",
+    "preact": "^10.29.8",
+    "ws": "^8.22.1",
+    "zod": "^4.6.7"
+  },
+  "devDependencies": {
+    "@axe-core/playwright": "^4.14.0",
+    "@playwright/test": "^1.64.1",
+    "@preact/preset-vite": "^2.10.6",
+    "@testing-library/preact": "^3.2.6",
+    "@types/better-sqlite3": "^7.6.13",
+    "@types/node": "^24.19.2",
+    "@types/ws": "^8.18.1",
+    "@vitest/coverage-v8": "^4.1.12",
+    "eslint": "^10.14.0",
+    "happy-dom": "^21.0.4",
+    "prettier": "^3.9.10",
+    "tsx": "^4.23.15",
+    "typescript": "^5.9.3",
+    "typescript-eslint": "^8.72.1",
+    "vite": "^7.3.7",
+    "vitest": "^4.1.12"
+  },
+  "allowScripts": {
+    "better-sqlite3@12.11.1": true,
+    "esbuild@0.28.2": true,
+    "fsevents@2.3.3": true
+  }
+}

@@ -1,0 +1,104 @@
+# Sürüm paketi (cicd-pipeline.md "Sürüm Etiketi ve Sürüm Paketi"): yalnızca sahibin onayıyla
+# main'e konan vX.Y.Z etiketinde çalışır. Denetimler yeniden çalışır, ARM64 paket üretilip
+# denenir ve GitHub Release olarak yayımlanır. Sunucuya yayın CI'da yapılmaz (deploy.sh).
+name: release
+
+on:
+  push:
+    tags: ['v*']
+
+permissions:
+  contents: read
+
+concurrency:
+  group: release
+  cancel-in-progress: false
+
+jobs:
+  guard:
+    runs-on: ubuntu-24.04
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          fetch-depth: 0
+      - name: Etiket biçimi, main atası ve package.json sürümü
+        run: |
+          TAG="${GITHUB_REF_NAME}"
+          [[ "$TAG" =~ ^v[0-9]+\.[0-9]+\.[0-9]+$ ]] || { echo "Etiket vX.Y.Z biçiminde değil: $TAG"; exit 1; }
+          git fetch origin main
+          git merge-base --is-ancestor "$GITHUB_SHA" origin/main || { echo "Etiketli commit main üzerinde değil"; exit 1; }
+          PKG="v$(node -p "require('./package.json').version")"
+          [[ "$PKG" == "$TAG" ]] || { echo "package.json sürümü ($PKG) etiketle ($TAG) aynı değil"; exit 1; }
+
+  verify:
+    needs: guard
+    uses: ./.github/workflows/ci.yml
+
+  bundle:
+    needs: verify
+    runs-on: ubuntu-24.04-arm
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+      - uses: actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1 # v7.1.0
+        with:
+          node-version-file: .nvmrc
+          cache: npm
+      - run: npm ci
+      - name: Derleme
+        run: npm run build
+      - name: Yalnızca çalışma zamanı paketleri
+        run: npm prune --omit=dev
+      - name: Paket ve SHA-256 özeti
+        run: |
+          TAG="${GITHUB_REF_NAME}"
+          NAME="gulyabani-${TAG}-linux-arm64"
+          mkdir -p "pkg/${NAME}"
+          cp -R dist content node_modules package.json package-lock.json infra "pkg/${NAME}/"
+          echo "$TAG" > "pkg/${NAME}/VERSION"
+          tar -C pkg -czf "${NAME}.tar.gz" "${NAME}"
+          sha256sum "${NAME}.tar.gz" > "${NAME}.tar.gz.sha256"
+          echo "BUNDLE=${NAME}" >> "$GITHUB_ENV"
+      - name: Paket denemesi
+        run: |
+          set -euo pipefail
+          TRY="$(mktemp -d)"
+          tar -C "$TRY" -xzf "${BUNDLE}.tar.gz"
+          APP="$TRY/${BUNDLE}"
+          export PUBLIC_ORIGIN=https://localhost:18080 PORT_PUBLIC=18080 PORT_INTERNAL=18081 \
+                 DATA_DIR="$TRY/data" APP_VERSION="${GITHUB_REF_NAME}" NODE_ENV=production
+          (cd "$APP" && node dist/server/main.js --check-config)
+          (cd "$APP" && node --max-old-space-size=288 dist/server/main.js) & PID=$!
+          for i in $(seq 1 60); do curl -fs http://127.0.0.1:18081/healthz >/dev/null && break; sleep 1; done
+          curl -fs http://127.0.0.1:18081/healthz | grep -q "\"version\":\"${GITHUB_REF_NAME}\""
+          curl -fs http://127.0.0.1:18080/healthz | grep -q "\"version\":\"${GITHUB_REF_NAME}\""
+          curl -fsI http://127.0.0.1:18080/ | grep -qi '^content-security-policy:'
+          node scripts/smoke.ts --origin https://localhost:18080 --ws ws://127.0.0.1:18080/ws --health http://127.0.0.1:18080/healthz
+          START=$(date +%s)
+          kill -TERM "$PID"
+          wait "$PID"
+          [[ $(( $(date +%s) - START )) -le 10 ]] || { echo "Kapanış 10 sn'yi aştı"; exit 1; }
+      - uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
+        with:
+          name: bundle
+          path: |
+            ${{ env.BUNDLE }}.tar.gz
+            ${{ env.BUNDLE }}.tar.gz.sha256
+          retention-days: 7
+
+  publish:
+    needs: bundle
+    runs-on: ubuntu-24.04
+    permissions:
+      contents: write
+    steps:
+      - uses: actions/download-artifact@9000827ccba6bdab643e8b6fd33ac0654aef8333 # v8.0.2
+        with:
+          name: bundle
+      - name: GitHub Release (v0.x ön sürüm)
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          TAG="${GITHUB_REF_NAME}"
+          PRE=""
+          [[ "$TAG" == v0.* ]] && PRE="--prerelease"
+          gh release create "$TAG" --repo "$GITHUB_REPOSITORY" --generate-notes $PRE ./*.tar.gz ./*.sha256

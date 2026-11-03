@@ -25,3 +25,16 @@ aidlc/spaces/*/intents/*/.aidlc-*
 aidlc/diagnostics/
 .claude/settings.local.json
 # END AI-DLC:gitignore
+node_modules
+
+# Gulyabani – Köylü: derleme ve test çıktıları
+node_modules/
+dist/
+coverage/
+reports/
+test-results/
+playwright-report/
+.deploy.env
+.env
+*.db
+*.db-*

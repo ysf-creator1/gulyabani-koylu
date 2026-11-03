@@ -1,0 +1,33 @@
+{
+  "version": 1,
+  "roles": [
+    {
+      "roleId": "ghul",
+      "name": "role.ghul.name",
+      "side": "ghuls",
+      "sideIcon": "claws",
+      "abilityText": "role.ghul.ability",
+      "wakeTiming": "every_night",
+      "winCondition": "role.ghul.win",
+      "strategyTip": "role.ghul.tip",
+      "flavorText": "role.ghul.flavor",
+      "mandatory": true,
+      "copiesWhenEnabled": 1,
+      "presets": ["beginner", "classic", "full_village"]
+    },
+    {
+      "roleId": "villager",
+      "name": "role.villager.name",
+      "side": "villagers",
+      "sideIcon": "lantern",
+      "abilityText": "role.villager.ability",
+      "wakeTiming": "never",
+      "winCondition": "role.villager.win",
+      "strategyTip": "role.villager.tip",
+      "flavorText": "role.villager.flavor",
+      "mandatory": true,
+      "copiesWhenEnabled": 1,
+      "presets": ["beginner", "classic", "full_village"]
+    }
+  ]
+}
