@@ -50,7 +50,7 @@ export const PING_EVERY = 20_000;
 export const PROBE_TIMEOUT = 2000;
 export const FAILING_AFTER = 60_000;
 const PENDING_KEY = 'gulyabani.pending';
-const STOP_REASONS = new Set<string>(['session_invalid', 'kicked', 'room_not_found']);
+const STOP_REASONS = new Set<string>(['session_invalid', 'kicked', 'room_not_found', 'left']);
 
 interface Pending {
   commandId: string;

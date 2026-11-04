@@ -315,3 +315,11 @@
   margin: 0 auto var(--space-3);
   color: var(--color-text);
 }
+
+/* Oyun sonunda odadan çıkma: sayfanın en altında, sağda, küçük; yanlışlıkla basılmasın diye
+   ana düğmelerden uzak ve onay ister (sahip geri bildirimi). Dokunma alanı yine 44 px'tir. */
+.leave-row {
+  display: flex;
+  justify-content: flex-end;
+  margin-top: var(--space-7);
+}

@@ -155,6 +155,37 @@ npx playwright install chromium && npx playwright test tests/u1/a11y/
 npm run verify          # Construction doğrulama komutu önerisi
 ```
 
+## Sahip Geri Bildirimi Sonrası Değişiklikler (v0.1.1, 2026-11-04)
+
+Sahip iskeleti telefonlarda denedi. Yeniden bağlanma denemesi ve bot testi geçti, iskelet onaylandı. Sahip dört düzeltme istedi; kural değişiklikleri önce testle yazıldı (kırmızı → yeşil):
+
+1. **Son sözü moderatör bitirebilir.**
+   - Son sözde `game.nextStep` artık `step_waiting` değil: onay oylamasını hemen açar.
+   - Eski sürenin dolması bir şey değiştirmez (BR10.6).
+   - Moderatör düğmesinin adı "Savunmayı bitir".
+   - Değişen dosyalar: `src/rules/decide.ts`, `ModeratorScreen.tsx`.
+2. **Oyun bitince odadan çıkma.**
+   - Yeni komut `room.leave` ve yeni kapanış nedeni `left` (C1'e yalnızca ekleme).
+   - Moderatör dışındaki oyuncu lobide ya da oyun bitince çıkabilir; oyun sürerken çıkamaz (`phase_closed`).
+   - Katılımcının durumu `left` olur ve oturumu kapanır; yeni oyunun lobisinde görünmez.
+   - Oyun başlamadıysa oyuncu oda linkiyle yeni katılımcı olarak geri girer.
+   - Düğme sayfanın en altında, sağda, ikincil görünümdedir ve onay sorusu sorar.
+   - Değişen dosyalar: `roomManager.ts` (`leaveRoom`), `commandRouter.ts`, `PlayerGame.tsx`, `app.tsx`.
+   - Ayrıca `app.tsx`'te kapanışta belirtecin silinmemesine yol açan eski bir kapanış (closure) hatası düzeltildi.
+3. **Kim kime oy verdi herkese görünür.**
+   - Oylar canlıyken (varsayılan, FR9.1) oyuncu ekranında "Kim kime oy verdi" listesi vardır.
+   - Liste oylama, son söz ve onay oylaması boyunca görünür.
+   - Değişen dosya: `PlayerGame.tsx` (`VoteDetail`).
+4. **Gulyabani öbür gulyabaniye oy veremez.**
+   - Kendine oy zaten engelliydi (BR6.5 testi vardı).
+   - Sahip, kurallar kesin değilse engellenmesini istedi; kaynaklar kesin bir kural vermedi.
+   - `castVote` reddeder (`invalid_target`) ve `legalActions` listesinde öbür gulyabaniler yoktur.
+   - Bu, FR9.1'e yapılan bir eklemedir.
+
+Sonuçlar:
+- `npm run verify` BAŞARILI: 272 birim/entegrasyon testi, satır kapsamı %89.63 / `src/rules` %99.56.
+- Erişilebilirlik taraması 2/2 geçti.
+
 ## Assumptions & Open Questions
 
 - [assumption] `DEV_TIME_SCALE` yalnızca test ve geliştirme içindir; üretimde ayar denetimi programı açmaz.

@@ -6,7 +6,7 @@ import type { NightLogEntry, ViewGame } from '../../shared/view.ts';
 import { ChatPanel } from '../components/ChatPanel.tsx';
 import { ChoiceList, PhaseBar, SeatList } from '../components/game.tsx';
 import { RoleCard } from '../components/RoleCard.tsx';
-import { FieldError, StatusBanner } from '../components/ui.tsx';
+import { ConfirmDialog, FieldError, StatusBanner } from '../components/ui.tsx';
 import { nickOf, useGame } from '../context.ts';
 import { t } from '../i18n.ts';
 
@@ -190,6 +190,30 @@ function VotePanel({ game }: { game: ViewGame }) {
   );
 }
 
+/** Kim kime oy verdi: oylar canlı görünürken herkese açıktır (FR9.1, sahip geri bildirimi). */
+function VoteDetail({ game }: { game: ViewGame }) {
+  const { view } = useGame();
+  const votes = game.votes ?? [];
+  return (
+    <section class="panel" data-testid="vote-detail">
+      <h2>{t('vote.tallyTitle')}</h2>
+      <ul class="list">
+        {votes.length === 0 && <li class="muted">{t('vote.none')}</li>}
+        {votes.map((v) => (
+          <li key={v.voterSeatId}>
+            {v.targetSeatId
+              ? t('vote.line', {
+                  voter: nickOf(view, v.voterSeatId),
+                  target: nickOf(view, v.targetSeatId),
+                })
+              : t('vote.lineAbstain', { voter: nickOf(view, v.voterSeatId) })}
+          </li>
+        ))}
+      </ul>
+    </section>
+  );
+}
+
 function logText(entry: NightLogEntry, nick: string): string {
   return t(entry.textKey, { n: entry.nightNumber, nick });
 }
@@ -206,6 +230,37 @@ export function NightLog({ entries }: { entries: NightLogEntry[] }) {
   );
 }
 
+/** Oyun sonunda moderatörü beklemeden odadan çıkma; onay ister (sahip geri bildirimi). */
+function LeaveRoom() {
+  const { send } = useGame();
+  const [asking, setAsking] = useState(false);
+  return (
+    <div class="leave-row">
+      {asking ? (
+        <ConfirmDialog
+          question={t('end.leaveConfirm')}
+          yes={t('end.leaveYes')}
+          no={t('end.leaveNo')}
+          onYes={() => {
+            setAsking(false);
+            void send('room.leave', {});
+          }}
+          onNo={() => setAsking(false)}
+        />
+      ) : (
+        <button
+          type="button"
+          class="button button--secondary"
+          data-testid="leave-room"
+          onClick={() => setAsking(true)}
+        >
+          {t('end.leave')}
+        </button>
+      )}
+    </div>
+  );
+}
+
 function EndScreen({ game }: { game: ViewGame }) {
   const villagersWon = game.winners?.sides.includes('villagers');
   return (
@@ -216,6 +271,7 @@ function EndScreen({ game }: { game: ViewGame }) {
       <h3>{t('end.nightLog')}</h3>
       <NightLog entries={game.nightLog ?? []} />
       <p class="muted">{t('end.waitNewGame')}</p>
+      <LeaveRoom />
     </section>
   );
 }
@@ -244,6 +300,7 @@ function DayContent({ game }: { game: ViewGame }) {
         </section>
       )}
       {(game.phase === 'voting' || game.phase === 'confirm_vote') && <VotePanel game={game} />}
+      {game.votes && <VoteDetail game={game} />}
       <ChatPanel channel="day" />
       <section class="panel">
         <h2>{t('lobby.participants')}</h2>

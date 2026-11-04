@@ -41,6 +41,8 @@ export function advanceFor(game: ViewGame, mod: ViewModerator): Advance | null {
       return { command: 'game.moveToVote', labelKey: 'mod.moveToVote', enabled: true };
     case 'voting':
       return { command: 'game.nextStep', labelKey: 'mod.closeVoting', enabled: true };
+    case 'last_words':
+      return { command: 'game.nextStep', labelKey: 'mod.endLastWords', enabled: true };
     case 'ended':
       return { command: 'game.newGame', labelKey: 'mod.newGame', enabled: true };
     default:

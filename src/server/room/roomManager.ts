@@ -204,6 +204,36 @@ export function kickParticipant(
 }
 
 /**
+ * Odadan çıkma (sahip geri bildirimi 2026-11-04): moderatör dışındaki oyuncu lobide ya da oyun
+ * bitince çıkabilir; oyun sürerken çıkılamaz. Oturum geçersiz olur; oyun başlamadıysa oda
+ * linkiyle yeniden katılabilir (yeni katılımcı olarak).
+ */
+export function leaveRoom(agg: RoomAggregate, actor: Actor, commandId: string): Outcome {
+  const me = agg.participants.find(
+    (p) => p.participantId === actor.participantId && p.status === 'active',
+  );
+  if (!me) return rejectWith('session_invalid');
+  if (isModerator(agg, me.participantId)) return rejectWith('not_your_turn');
+  if (roomStatus(agg) === 'in_game') return rejectWith('phase_closed');
+  const left: Participant = { ...me, status: 'left' };
+  const room = bumpRoom(agg.room, commandId);
+  return {
+    status: 'accepted',
+    next: {
+      ...agg,
+      room,
+      participants: agg.participants.map((p) => (p.participantId === me.participantId ? left : p)),
+    },
+    ops: [
+      updateParticipantStatus(left),
+      updateRoom(room, agg.room.version),
+      revokeSession(me.sessionId),
+    ],
+    effects: [{ kind: 'revokeSession', sessionId: me.sessionId, reasonCode: 'left' }],
+  };
+}
+
+/**
  * Oyunu başlatma (BR2.1, BR2.2, BR3.1, BR3.2): önce oyun kaydı, sonra oda kaydı yazılır; ikisi
  * aynı yazım isteğindedir (kesinleşme noktası oda kaydıdır, BR10.2).
  */

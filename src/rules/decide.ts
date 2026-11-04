@@ -37,6 +37,8 @@ function nextStep(state: GameState, now: number): Decision {
     case 'voting':
       return closeVoting(state, now);
     case 'last_words':
+      // Moderatör son sözü erken bitirebilir; savunma yoksa boşa beklenmez (sahip geri bildirimi)
+      return lastWordsTimeout(state, now);
     case 'confirm_vote':
       return reject('step_waiting');
     default:

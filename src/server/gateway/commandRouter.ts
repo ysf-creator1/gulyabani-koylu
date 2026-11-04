@@ -10,6 +10,7 @@ import {
   isExpired,
   joinRoom,
   kickParticipant,
+  leaveRoom,
   newGame,
   startGame,
   type SessionRef,
@@ -46,6 +47,8 @@ export function routeCommand(
     switch (command.name) {
       case 'lobby.kick':
         return kickParticipant(agg, actor, command.args.participantId, commandId);
+      case 'room.leave':
+        return leaveRoom(agg, actor, commandId);
       case 'lobby.startGame':
         return startGame(agg, actor, ctx, commandId);
       case 'game.newGame':

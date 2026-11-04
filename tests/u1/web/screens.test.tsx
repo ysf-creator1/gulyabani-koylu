@@ -241,6 +241,36 @@ describe('gündüz, oylama ve son söz (BR6.1–BR6.8)', () => {
     expect(sent).toEqual([{ name: 'game.vote', args: { targetSeatId: 's3' } }]);
   });
 
+  it('kim kime oy verdi herkese görünür; son sözde de kalır; oy yoksa söylenir (sahip geri bildirimi)', () => {
+    const voting = gameView({
+      phase: 'voting',
+      dayNumber: 1,
+      voteRound: 'initial',
+      votes: [{ voterSeatId: 's2', targetSeatId: 's3' }],
+      myAction: { kind: 'vote', targets: ['s2', 's3'] },
+    });
+    renderWith(voting, <PlayerGame />);
+    expect(screen.getByTestId('vote-detail').textContent).toContain('Bot2 → Bot3');
+    cleanup();
+    renderWith(
+      gameView({
+        phase: 'last_words',
+        dayNumber: 1,
+        accusedSeatId: 's3',
+        deadline: NOW + 30_000,
+        votes: [{ voterSeatId: 's2', targetSeatId: 's3' }],
+      }),
+      <PlayerGame />,
+    );
+    expect(screen.getByTestId('vote-detail').textContent).toContain('Bot2 → Bot3');
+    cleanup();
+    renderWith(gameView({ phase: 'voting', dayNumber: 1, votes: [] }), <PlayerGame />);
+    expect(screen.getByTestId('vote-detail').textContent).toContain('Henüz kimse oy vermedi.');
+    cleanup();
+    renderWith(gameView({ phase: 'day', dayNumber: 1 }), <PlayerGame />);
+    expect(screen.queryByTestId('vote-detail')).toBeNull();
+  });
+
   it('reddedilen oy nedeni Türkçe gösterilir', async () => {
     const view = gameView({
       phase: 'confirm_vote',
@@ -301,5 +331,26 @@ describe('duraklatma ve oyun sonu', () => {
     expect(screen.getByTestId('end-winner').textContent).toBe('Köylüler kazandı!');
     expect(screen.getByTestId('seat-list').textContent).toContain('Gulyabaniler');
     expect(screen.getByTestId('night-log').textContent).toBe('1. gece: Bot2 kaçırıldı.');
+  });
+
+  it('oyun sonunda Odadan çık onay ister; Vazgeç hiçbir şey göndermez, Evet room.leave gönderir', async () => {
+    const view = gameView({
+      phase: 'ended',
+      dayNumber: 1,
+      winners: { sides: ['ghuls'], extraSeatIds: [] },
+    });
+    const { sent } = renderWith(view, <PlayerGame />);
+    fireEvent.click(screen.getByTestId('leave-room'));
+    expect(screen.getByTestId('confirm-dialog').textContent).toContain(
+      'Odadan çıkmak istiyor musun?',
+    );
+    fireEvent.click(screen.getByText('Vazgeç'));
+    expect(sent).toEqual([]);
+    expect(screen.queryByTestId('confirm-dialog')).toBeNull();
+    fireEvent.click(screen.getByTestId('leave-room'));
+    await act(async () => {
+      fireEvent.click(screen.getByTestId('confirm-yes'));
+    });
+    expect(sent).toEqual([{ name: 'room.leave', args: {} }]);
   });
 });

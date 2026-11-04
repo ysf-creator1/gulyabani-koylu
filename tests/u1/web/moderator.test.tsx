@@ -131,6 +131,21 @@ describe('akış paneli', () => {
     expect(sent).toEqual([{ name: 'game.nextStep', args: { stepVersion: 3 } }]);
   });
 
+  it('son sözde Savunmayı bitir düğmesi Sonraki Adım komutunu gönderir', async () => {
+    const { sent } = renderWith(
+      modView(
+        { phase: 'last_words', dayNumber: 1, accusedSeatId: 's2', deadline: NOW + 30_000 },
+        moderatorBlock(),
+      ),
+      <ModeratorScreen />,
+    );
+    expect(screen.getByTestId('mod-advance-button').textContent).toBe('Savunmayı bitir');
+    await act(async () => {
+      fireEvent.click(screen.getByTestId('mod-advance-button'));
+    });
+    expect(sent).toEqual([{ name: 'game.nextStep', args: { stepVersion: 3 } }]);
+  });
+
   it('duraklatılmışken Devam et gönderilir; ret nedeni gösterilir', async () => {
     const { sent } = renderWith(
       modView({ phase: 'day', dayNumber: 1, paused: true, remainingMs: 10_000 }),
@@ -166,9 +181,16 @@ describe('oyuncular, günlük ve sohbet', () => {
 
   it('ilerletme düğmesi Faz Bitirme Tablosu ile uyumludur', () => {
     const mod = moderatorBlock();
+    // Son söz moderatörce erken bitirilebilir (sahip geri bildirimi); onay oylamasında düğme yok
     expect(
       advanceFor(
         { phase: 'last_words', nightNumber: 1, dayNumber: 1, paused: false, seats: [] },
+        mod,
+      ),
+    ).toEqual({ command: 'game.nextStep', labelKey: 'mod.endLastWords', enabled: true });
+    expect(
+      advanceFor(
+        { phase: 'confirm_vote', nightNumber: 1, dayNumber: 1, paused: false, seats: [] },
         mod,
       ),
     ).toBeNull();

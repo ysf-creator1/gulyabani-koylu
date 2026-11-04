@@ -69,6 +69,7 @@ export function App(props: AppProps) {
   const pendingToken = useRef<string | undefined>(undefined);
   const wasOpen = useRef(false);
   const lastPhase = useRef<Phase | undefined>(undefined);
+  const roomCodeRef = useRef<string | null>(null);
 
   const go = (next: string) => {
     props.navigate(next);
@@ -95,6 +96,7 @@ export function App(props: AppProps) {
         const said = phaseAnnouncement(lastPhase.current, next.game?.phase);
         if (said) setAnnouncement(said);
         lastPhase.current = next.game?.phase;
+        roomCodeRef.current = next.room.roomCode;
         setView(next);
         setEntry(null);
         const roomPath = `/oda/${next.room.roomCode}`;
@@ -102,8 +104,18 @@ export function App(props: AppProps) {
         setPath(roomPath);
       },
       onClosed: (reason) => {
+        // Oturum bittiğinde bu odanın saklı belirteci silinir (abonelik bir kez kurulduğu için
+        // güncel oda kodu ref'ten okunur).
+        if (reason !== 'superseded' && roomCodeRef.current) tokens.remove(roomCodeRef.current);
+        if (reason === 'left') {
+          // Kendi isteğiyle çıkan oyuncu doğrudan ana sayfaya döner (sahip geri bildirimi)
+          roomCodeRef.current = null;
+          setView(null);
+          setEntry(null);
+          go('/');
+          return;
+        }
         if (reason !== 'superseded') setClosedReason(reason);
-        if (view) tokens.remove(view.room.roomCode);
       },
       onReload: () => props.reload(),
     });

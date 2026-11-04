@@ -15,6 +15,7 @@ import {
   rejected,
   run,
   seat,
+  system,
   toGhulKill,
   voteAll,
 } from './helpers.ts';
@@ -71,6 +72,16 @@ describe('oy verme (BR6.5)', () => {
     rejected(run(voting, cmd('game.vote', seat('s2'), { targetSeatId: 's2' })), 'invalid_target');
     rejected(run(voting, cmd('game.vote', seat('s2'), { targetSeatId: 's77' })), 'invalid_target');
     rejected(run(voting, cmd('game.vote', seat('s2'), { targetSeatId: null })), 'invalid_target');
+  });
+
+  it('gulyabani öbür gulyabaniye oy veremez; köylü gulyabaniye verebilir (sahip geri bildirimi)', () => {
+    const voting = moveToVote(toDay('ggvvvvv'));
+    rejected(run(voting, cmd('game.vote', seat('s1'), { targetSeatId: 's2' })), 'invalid_target');
+    rejected(run(voting, cmd('game.vote', seat('s2'), { targetSeatId: 's1' })), 'invalid_target');
+    expect(voteAll(voting, { s3: 's1', s1: 's3' }).votes).toEqual([
+      { voterSeatId: 's3', targetSeatId: 's1' },
+      { voterSeatId: 's1', targetSeatId: 's3' },
+    ]);
   });
 
   it('ölü oyuncu ve moderatör oy veremez; oylama dışında oy phase_closed alır', () => {
@@ -138,13 +149,43 @@ describe('son söz ve onay oylaması (BR6.8, BR6.9)', () => {
     );
   }
 
-  it('son sözde Sonraki Adım step_waiting alır; süre dolunca oylar korunarak onay oylaması açılır', () => {
+  it('moderatör son sözü erken bitirebilir: onay oylaması hemen açılır, eski süre işlemez (sahip geri bildirimi)', () => {
     const lastWords = toLastWords();
     rejected(
-      run(lastWords, cmd('game.nextStep', moderator, { stepVersion: lastWords.stepVersion })),
+      run(lastWords, cmd('game.nextStep', seat('s3'), { stepVersion: lastWords.stepVersion })),
+      'not_moderator',
+    );
+    const early = ok(
+      run(
+        lastWords,
+        cmd('game.nextStep', moderator, { stepVersion: lastWords.stepVersion }),
+        NOW + 5_000,
+      ),
+    );
+    expect(early.phase).toBe('confirm_vote');
+    expect(early.votes).toEqual(lastWords.votes);
+    expect(early.deadline).toEqual({ endsAt: NOW + 5_000 + 20_000, totalSeconds: 20 });
+    // Son sözün eski süresi dolduğunda hiçbir şey değişmez (BR10.6)
+    rejected(
+      run(
+        early,
+        cmd('system.deadlineReached', system, {
+          stepVersion: lastWords.stepVersion,
+          endsAt: lastWords.deadline?.endsAt,
+        }),
+        NOW + 30_000,
+      ),
+      'phase_closed',
+    );
+  });
+
+  it('son söz süresi dolunca oylar korunarak onay oylaması açılır; onay oylamasında Sonraki Adım step_waiting alır', () => {
+    const lastWords = toLastWords();
+    const confirm = ok(deadline(lastWords, NOW + 30_000));
+    rejected(
+      run(confirm, cmd('game.nextStep', moderator, { stepVersion: confirm.stepVersion })),
       'step_waiting',
     );
-    const confirm = ok(deadline(lastWords, NOW + 30_000));
     expect(confirm.phase).toBe('confirm_vote');
     expect(confirm.voteRound).toBe('confirm');
     expect(confirm.votes).toEqual(lastWords.votes);

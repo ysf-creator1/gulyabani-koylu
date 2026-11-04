@@ -35,6 +35,7 @@ function voteActions(state: GameState, seatId: string): LegalAction[] {
   if (!seat || !seat.alive) return [];
   const targets = livingSeats(state)
     .filter((s) => s.seatId !== seatId)
+    .filter((s) => !(seat.roleId === 'ghul' && s.roleId === 'ghul'))
     .filter((s) => !state.tiedSeatIds || state.tiedSeatIds.includes(s.seatId))
     .map((s) => s.seatId);
   const action: LegalAction = { kind: 'vote', targets };

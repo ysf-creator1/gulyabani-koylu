@@ -99,6 +99,7 @@ const RawNick = z.string().max(256);
 export const COMMAND_ARG_SCHEMAS = {
   'room.create': z.object({ nick: RawNick }),
   'room.join': z.object({ roomCode: z.string().regex(ROOM_CODE_PATTERN), nick: RawNick }),
+  'room.leave': Empty,
   'lobby.startGame': Empty,
   'lobby.kick': z.object({ participantId: z.string().min(1).max(64) }),
   'game.cardSeen': Empty,

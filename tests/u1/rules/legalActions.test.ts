@@ -51,6 +51,17 @@ describe('legalActions', () => {
     const revote = next(voteAll(voting, { s1: 's2', s3: 's4' }));
     expect(legalActions(revote, 's2')).toEqual([{ kind: 'vote', targets: ['s4'] }]);
   });
+
+  it('gulyabaninin oy listesinde öbür gulyabaniler yoktur (sahip geri bildirimi 2026-11-04)', () => {
+    const day = morningReveal(ghulsKill(toGhulKill(newGame('ggvvvvv')), 's7'));
+    const voting = moveToVote(day);
+    expect(legalActions(voting, 's1')).toEqual([
+      { kind: 'vote', targets: ['s3', 's4', 's5', 's6'] },
+    ]);
+    expect(legalActions(voting, 's3')).toEqual([
+      { kind: 'vote', targets: ['s1', 's2', 's4', 's5', 's6'] },
+    ]);
+  });
 });
 
 describe('geçersiz komut durumu değiştirmez (AC13.5.1, BR10.1)', () => {

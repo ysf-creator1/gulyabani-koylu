@@ -43,6 +43,8 @@ export function castVote(state: GameState, voterSeatId: string, targetSeatId: un
   } else {
     const target = typeof targetSeatId === 'string' ? findSeat(state, targetSeatId) : undefined;
     if (!target || !target.alive || target.seatId === voterSeatId) return reject('invalid_target');
+    // Gulyabani öbür gulyabaniye oy veremez (sahip geri bildirimi; kaynaklarda kesin kural yok)
+    if (voter.roleId === 'ghul' && target.roleId === 'ghul') return reject('invalid_target');
     if (state.tiedSeatIds && !state.tiedSeatIds.includes(target.seatId))
       return reject('invalid_target');
   }

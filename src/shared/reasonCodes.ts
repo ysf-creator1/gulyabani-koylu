@@ -27,6 +27,8 @@ export const REASON_CODES = [
   'server_busy',
   // C1'de U8 altında; Teslim Planlaması B1 basit hız sınırını U1'e aldı (BR10.3)
   'rate_limited',
+  // Oyuncu odadan kendi isteğiyle çıktı (sahip geri bildirimi 2026-11-04); bağlantı kapanış nedeni
+  'left',
 ] as const;
 
 export const ReasonCodeSchema = z.enum(REASON_CODES);

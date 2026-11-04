@@ -101,7 +101,7 @@ interface ParticipantRow {
   room_code: string;
   nick: string;
   normalized_nick: string;
-  status: 'active' | 'kicked';
+  status: 'active' | 'kicked' | 'left';
   session_id: string;
   joined_at: number;
 }

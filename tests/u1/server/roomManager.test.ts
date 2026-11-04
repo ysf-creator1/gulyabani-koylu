@@ -10,6 +10,7 @@ import {
   isExpired,
   joinRoom,
   kickParticipant,
+  leaveRoom,
   newGame,
   startGame,
 } from '../../../src/server/room/roomManager.ts';
@@ -233,5 +234,48 @@ describe('yeni oyun ve boş lobi (BR7.3, BR12.4)', () => {
     const three = withPlayers(3);
     const started = startGame(three, moderatorActor(three), ctx(), 'c').next!;
     expect(expireIdleLobby(started, NOW).status).toBe('dropped');
+  });
+});
+
+describe('odadan çıkma (sahip geri bildirimi 2026-11-04)', () => {
+  const playerActor = (agg: RoomAggregate, index: number): Actor => ({
+    sessionId: `s${index}`,
+    participantId: agg.participants[index]!.participantId,
+    connectionId: 'c',
+  });
+
+  it('oyun bitince oyuncu çıkar; oturumu kapanır, yeni oyunun lobisinde görünmez', () => {
+    const lobby = withPlayers(3);
+    const started = startGame(lobby, moderatorActor(lobby), ctx(), 'c-start').next!;
+    const ended: RoomAggregate = { ...started, match: { ...started.match!, status: 'ended' } };
+    const outcome = leaveRoom(ended, playerActor(ended, 1), 'c-leave');
+    expect(outcome.status).toBe('accepted');
+    expect(outcome.next!.participants[1]!.status).toBe('left');
+    expect(outcome.effects).toEqual([
+      { kind: 'revokeSession', sessionId: 's1', reasonCode: 'left' },
+    ]);
+    const back = newGame(outcome.next!, moderatorActor(outcome.next!), 'c-new').next!;
+    expect(back.participants.filter((p) => p.status === 'active')).toHaveLength(3);
+  });
+
+  it('oyun sürerken çıkılamaz; moderatör çıkamaz; oturumu olmayan session_invalid alır', () => {
+    const lobby = withPlayers(3);
+    const started = startGame(lobby, moderatorActor(lobby), ctx(), 'c-start').next!;
+    expect(leaveRoom(started, playerActor(started, 1), 'c').reasonCode).toBe('phase_closed');
+    expect(leaveRoom(lobby, moderatorActor(lobby), 'c').reasonCode).toBe('not_your_turn');
+    const stranger: Actor = { sessionId: 'x', participantId: 'yok', connectionId: 'c' };
+    expect(leaveRoom(lobby, stranger, 'c').reasonCode).toBe('session_invalid');
+  });
+
+  it('lobiden çıkan oyuncu aynı takma adla yeni oturumla geri girebilir', () => {
+    const lobby = withPlayers(2);
+    const left = leaveRoom(lobby, playerActor(lobby, 1), 'c-leave').next!;
+    const again = joinRoom(left, ctx(), {
+      nick: 'Oyuncu1',
+      session: freshSession('s1-yeni'),
+      commandId: 'c-rejoin',
+    });
+    expect(again.status).toBe('accepted');
+    expect(again.next!.participants.filter((p) => p.nick === 'Oyuncu1')).toHaveLength(2);
   });
 });

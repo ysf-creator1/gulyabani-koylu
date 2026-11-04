@@ -103,6 +103,13 @@ describe('bağlantı şeridi', () => {
     act(() => connection.emit('onReload'));
     expect(reloads).toHaveLength(1);
   });
+
+  it('kendi isteğiyle çıkınca mesaj gösterilmez, ana sayfa açılır (sahip geri bildirimi)', () => {
+    const { connection } = setup();
+    act(() => connection.emit('onClosed', 'left'));
+    expect(screen.queryByTestId('message-screen')).toBeNull();
+    expect(screen.getByTestId('home-join-button')).toBeTruthy();
+  });
 });
 
 describe('duyuru ve tema', () => {

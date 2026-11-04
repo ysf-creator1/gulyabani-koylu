@@ -14,7 +14,8 @@ export interface Participant {
   roomCode: string;
   nick: string;
   normalizedNick: string;
-  status: 'active' | 'kicked';
+  /** left: oyuncu lobide ya da oyun bitince kendi isteğiyle çıktı (sahip geri bildirimi). */
+  status: 'active' | 'kicked' | 'left';
   sessionId: string;
   joinedAt: number;
 }
