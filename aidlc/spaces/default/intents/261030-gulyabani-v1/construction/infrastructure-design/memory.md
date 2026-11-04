@@ -17,3 +17,10 @@
 
 ## Open questions
 <!-- example: 2026-05-29T10:14:32Z — confirm the retention window with compliance before the next stage hardens the schema -->
+- 2026-11-04T20:25:00Z — [unit u2-room-and-lobby] İnceleme (READY) bulguları, U2 Code Generation planına zorunlu madde olarak devredilir:
+  - (1) Duman testinin bekleme denemesi: 3 bot oyunu başlatır, 4. bot bekler, sonra moderatör botu oyunu bitirmeden önce bütün botlar bağlantıyı keser ve deneme odası boşalınca 15 dk'da silinir. activeMatches'in sonraki yayını bekletmemesi için duman testi oyunu başlatmaz: yalnızca oyun sürüyormuş gibi davranan bir yol yok, bu yüzden bekleme denemesi canlıda değil uçtan uca testte yapılır; canlı duman testi U1'deki gibi kalır.
+  - (2) Geri alma testi: release.yml'de v0.1.1 paketiyle 002 uygulanmış depoya yazma (INSERT) denemesi ya da check:migrations'a "NOT NULL sütun DEFAULT taşır" kuralı.
+  - (3) deploy.sh'de göçten önce `VACUUM INTO` ile tek anlık kopya.
+  - (4) kickBansApplied eşiği journalctl ile sayılır.
+  - (5) ci.yml'de ayar denetimi ve göç testinin hangi işte çalışacağı; config.ts'te DEV_ALL_ROLES reddi.
+  - NFR Design'dan: forgetParticipant çağrı noktaları (çıkarma, ayrılma, oda silme) ve bellek sızıntısı testi.
