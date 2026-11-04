@@ -44,6 +44,12 @@ active_matches() {
 # Program yanıt vermiyorsa korunacak oyun yoktur, devam edilir.
 wait_for_no_games() {
   local minute count
+  # Yalnızca sahibin açık onayıyla: süren oyun beklenmez. Oyun depoda kayıtlı olduğu için yeniden
+  # başlatmadan sonra kısa bir duraklamayla kaldığı yerden sürer (FR14.6).
+  if [[ "${SKIP_GAME_WAIT:-}" == 1 ]]; then
+    echo "UYARI: süren oyun beklenmiyor (SKIP_GAME_WAIT=1, sahibin onayıyla); etkin oyun: $(active_matches)."
+    return 0
+  fi
   for ((minute = 0; minute <= WAIT_GAMES_MINUTES; minute++)); do
     count="$(active_matches)"
     if [[ "$count" == none || "$count" == 0 ]]; then
