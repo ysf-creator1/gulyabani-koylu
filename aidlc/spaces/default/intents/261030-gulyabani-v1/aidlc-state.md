@@ -147,6 +147,8 @@
 - **Status**: Running
 - **Last Updated**: 2026-11-03T21:25:40Z
 
+- **Construction Autonomy Mode**: autonomous
+
 ## Session Resume Point
 - **Last Completed Stage**: delivery-planning
 - **Next Action**: Execute Functional Design
