@@ -1,0 +1,28 @@
+## Review
+
+**Verdict:** READY
+**Reviewer:** aidlc-architecture-reviewer-agent
+**Date:** 2026-11-04T20:09:33Z
+**Iteration:** 1
+**Verdict Dictated:** no
+
+### Findings
+
+| ID | Severity | Location | Finding | Required action | Status |
+|---|---|---|---|---|---|
+| R-01 | Major | aidlc/spaces/default/intents/261030-gulyabani-v1/construction/u2-room-and-lobby/nfr-requirements/security-requirements.md > Tehdit Özeti, "Hizmet engelleme" satırı (ve performance-requirements.md > NFR1.23) | Tehdit tablosu "çok sayıda ayar komutu" tehdidini "U1 hız sınırları (NFR7.7)" ile karşılıyor. U1 NFR7.7 yalnızca sohbet (10 sn'de 5 mesaj), oda kodu denemesi, oda kurma ve bağlantı başına saniyede 20 mesaj sınırını içeriyor; lobi komutları için ayrı bir sınır yok. Her `lobby.setSettings` ya da `lobby.setRolePool` kabulden önce diske yazılıyor ve 27 alıcıya görünüm üretiyor. Saniyede 19 komut gönderen tek bir kötü niyetli moderatör bağlantıyı kapattırmadan sürekli yazım üretir; U1 NFR1.3 kapasitesi saniyede yaklaşık 300 komut olduğu için birkaç oda bütün sunucunun %95 ≤ 150 ms hedefini (NFR1.1) bozabilir. NFR1.23'teki 300 ms bekleme yalnızca dürüst istemciyi korur, sunucuyu korumaz. | Moderatör lobi komutları için sunucu tarafında oda başına (ya da bağlantı başına) bir hız sınırı gereksinimi ekle (örn. saniyede en çok 5 ayar komutu, aşan `rate_limited`) ve ölçütüne "6. komut `rate_limited`" testini yaz. Tehdit tablosundaki gönderme, bu yeni numarayı göstersin. | New |
+| R-02 | Major | aidlc/spaces/default/intents/261030-gulyabani-v1/construction/u2-room-and-lobby/nfr-requirements/security-requirements.md > NFR7.21 ve scalability-requirements.md > NFR2.21 | 24 saat sonunda silme gereksinimi yalnızca çıkarma kayıtlarını (`room_kick_records`) kapsıyor ve yalnızca onun için ölçüt var (NFR2.21). Tarayıcı anahtarı özetini asıl taşıyan `room_participants.browser_key_hash` sütununun oda ile birlikte silineceği, işlevsel tasarımda (BR14.6) yazılı olduğu hâlde NFR belgelerinde ölçülebilir bir gereksinim ve test olarak yok. NFR7.21'in ölçütü yalnızca depoda düz anahtar ve IP aranmasını söylüyor. Proje kuralı (odaları 24 saatte sil, C-15) ve ekibin "silme ve IP saklanmaması otomatik testle sınanır" kararı bu sütun için kanıtsız kalıyor. Ayrıca özet tuzsuz SHA-256 olduğundan aynı tarayıcı farklı odalarda aynı özeti taşıyor ve odalar arası eşleştirmeye açık. | NFR7.21 ya da NFR2.21'e açık bir madde ekle: süresi dolan odadan sonra depo dosyasında o odaya ait hiçbir anahtar özeti (katılımcı ve çıkarma kaydı) kalmaz; testi yaz. Özeti odaya özel yapmayı (örn. oda kodu ile birlikte özetleme) gereksinim olarak değerlendir ya da bilinçli karar olarak kayda geçir. | New |
+| R-03 | Minor | aidlc/spaces/default/intents/261030-gulyabani-v1/construction/u2-room-and-lobby/nfr-requirements/observability-requirements.md > NFR13.21 | `participant.waiting` olayı sözleşmede (contract-summary C6 U2 olay listesi) ve functional-spec'in "C6 olaylar" satırında yok; orada yalnızca `settings.changed`, `rolePool.changed`, `moderator.transferred`, `room.closedToNew` var. Gereksinim, çözümlenmeyen bir olay adına dayanıyor. | `participant.waiting` olayını sözleşmeye eklenecek olarak işaretle ya da gereksinimden çıkar (bekleme zaten `participant.joined` ile sayılabilir). | New |
+| R-04 | Minor | aidlc/spaces/default/intents/261030-gulyabani-v1/construction/u2-room-and-lobby/nfr-requirements/observability-requirements.md > NFR13.22 | Metin, reddedilen lobi komutlarının "U1 hata sayacı" ile sayıldığını söylüyor ve yalnızca iki kodu (`settings_out_of_range`, `pool_invalid`) hariç tutuyor. U1 NFR13.4'te hata sayacı yalnızca `internal_error`, başarısız silme ve düşen olayı sayıyor; `kick_banned`, `not_moderator` gibi reddler zaten o sayaca girmiyor. İki belge çelişiyor; geliştirici hangi reddin hata sayılacağını tahmin etmek zorunda. | Reddedilen komutlar için ayrı, neden koduna göre bir sayaç tanımla ve hata sayacına yalnızca U1'in tanımındaki kalemlerin girdiğini açıkça yaz. | New |
+| R-05 | Minor | aidlc/spaces/default/intents/261030-gulyabani-v1/construction/u2-room-and-lobby/nfr-requirements/security-requirements.md > NFR7.20 | Moderatör yetkisi denetimi yalnızca 5 yeni lobi komutunu sayıyor. U2'nin genişlettiği `lobby.kick` (bekleyen hedef, BR14.1) ve bekleyenin gönderemeyeceği oyun ve sohbet komutları (BR13.3) için yetki reddi testi yok. | NFR7.20 kapsamına `lobby.kick` (oyuncu ve bekleyen adına) ile bekleyenin oyun ve sohbet komutlarının reddini ekle. | New |
+| R-06 | Minor | aidlc/spaces/default/intents/261030-gulyabani-v1/construction/u2-room-and-lobby/nfr-requirements/scalability-requirements.md > NFR2.21 | "Çıkarma kaydı sayısı farklı tarayıcı sayısıyla sınırlıdır" deniyor, ama sayısal bir üst sınır yok. Çıkarılan kişi her seferinde yeni anahtarla girip tekrar çıkarılabildiği için 24 saat içinde kayıt sayısı sınırsız büyüyebilir; "1.000 kayıt 1 MB'ı geçmez" yalnızca varsayım. | Oda başına kayıt için sayısal bir üst sınır koy (örn. 200) ve sınırda en eski kaydın ne olacağını yaz. | New |
+
+### Validation Tool Results
+
+| Tool | Result | Interpretation |
+|---|---|---|
+| aidlc engine sensor-traceability --stage nfr-requirements | PASS: boşluk, öksüz ve geçersiz hedef yok | NFR1–NFR15 üst kimliklerinin hepsi U2 numaralarına eşleniyor; izlenebilirlik sorunu yok. |
+
+### Summary
+
+Belge seti tutarlı ve izlenebilir: alt numaralar .20'den başlıyor, U1'le çakışma yok, yeni bağımlılık yok. Ana kaygılar, lobi komutları için gerçekte var olmayan bir hız sınırına dayanan hizmet engelleme karşılığı ve tarayıcı anahtarı özetlerinin 24 saatte silinmesinin ölçülebilir gereksinime bağlanmamış olması; ikisi de bu aşamada düzeltilebilir ve iki Major sınırı içinde kaldığı için sonuç READY.
